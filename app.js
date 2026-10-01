@@ -57,8 +57,6 @@ const productSchema = new mongoose.Schema({
     title: String,
     description: String,
     price: Number,
-    rating: Number,
-    categories: { type: [String], default: [] },
     image: String
 });
 
@@ -117,7 +115,6 @@ app.post("/product", upload.single("image"), async (req, res) => {
         title: data.title,
         description: data.description,
         price: Number(data.price),
-        rating: Number(data.rating),
         image: imagePath,
     });
 

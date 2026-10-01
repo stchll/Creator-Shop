@@ -48,7 +48,6 @@ async function reloadProducts() {
             <td><img src="${imageSrc}"></td>
             <td>${product.title}</td>
             <td>${product.description}</td>
-            <td>${product.rating}</td>
             <td>
                 <button onclick="deleteRequest('${product._id}')" class="deleteBtn">
                     <i class="fa-solid fa-trash"></i>
