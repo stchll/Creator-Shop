@@ -2,7 +2,6 @@ const url = "";
 
 const tabBtns = document.querySelectorAll(".tabBtn");
 const pages = document.querySelectorAll(".page");
-const blur = document.querySelector(".blurLayer");
 
 const productCreateModal = document.querySelector(".productChangeModal");
 const createProductForm = document.getElementById("productChangeModal");
@@ -22,9 +21,33 @@ const deleteProductCancel = document.getElementById("deleteModalCancel");
 
 let produnctToDelte = null;
 
-function setBlur(state) {
-    blur.style.display = state
+class BlurContoller {
+    constructor() {
+        this.section = document.querySelector(".blurLayer");
+
+        this.active = false;
+    }
+
+    toggle() {
+        if (this.active == true) {
+            this.section.style.opacity = 1;
+        } else {
+            this.section.style.opacity = 0;
+        }
+
+        this.active = !this.active;
+    }
+
+    set(flag) {
+        if (flag == true) {
+            this.section.style.opacity = 1;
+        } else {
+            this.section.style.opacity = 0;
+        }
+    }
 }
+
+const Blur = new BlurContoller();
 
 async function reloadProducts() {
     const data = await getProducts()
@@ -79,7 +102,7 @@ async function getProducts() {
 function deleteRequest(prodcutId) {
     deleteProductModal.style.display = "flex";
 
-    setBlur("block")
+    Blur.set(true);
 
     produnctToDelte = prodcutId
 }
@@ -102,14 +125,14 @@ deleteProductAccept.addEventListener("click" , async (e) => {
             reloadProducts()
             
             deleteProductModal.style.display = "none";
-            setBlur("none");
+            Blur.set(false);
         }
     }
 })
 
 deleteProductCancel.addEventListener("click",() => {
     deleteProductModal.style.display = "none";
-    setBlur("none")
+    Blur.set(false);
     produnctToDelte = null
 })
 
@@ -151,7 +174,7 @@ createProductForm.addEventListener("submit", async (e) => {
                 reloadProducts();
 
                 productCreateModal.style.display = "none";
-                setBlur("none")
+                Blur.set(false);
             }
 
         } catch (error) {
@@ -161,11 +184,12 @@ createProductForm.addEventListener("submit", async (e) => {
 })
 
 createModalOpen.addEventListener("click", () => {
-    productCreateModal.style.display = "flex"
-    setBlur("block")
+    productCreateModal.style.left = "50%";
+
+    Blur.set(true);
 })
 
 createModalClose.addEventListener("click", () => {
-    productCreateModal.style.display = "none"
-    setBlur("none")
+    productCreateModal.style.left = "150%"
+    Blur.set(false);
 })

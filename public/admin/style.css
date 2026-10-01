@@ -75,8 +75,9 @@ header {
 }
 
 .productsPage .controlContainer .addBtn {
-    padding: 0.5rem 1rem;
-    border-radius: 1rem;
+    padding: 0.4rem 1.7rem;
+    font-size: 1rem;
+    border-radius: 0.5rem;
     border: none;
     cursor: pointer;
     transition: 0.3s ease;
@@ -87,8 +88,14 @@ header {
     box-shadow: 0 0 20px #90ec0683;
 }
 
+.productsPage .tableContainer {
+    width: 80%;
+    overflow-x: auto;
+}
+
 .productsTable {
     border-collapse: collapse;
+    width: 100%;
     border: 1px solid #000;
 }
 
@@ -115,8 +122,11 @@ td img {
 .blurLayer {
     width: 100%;
     height: 100%;
-    display: none;
+    display: flex;
     position: fixed;
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.3s ease;
     background-color: rgba(0,0,0,0.5);
     backdrop-filter: blur(10px);
 }
@@ -130,16 +140,16 @@ td img {
 .productChangeModal {
     width: 450px;
     height: 500px;
-    display: none;
+    display: flex;
     padding: 1rem;
     flex-direction: column;
     align-items: center;
     position: absolute;
     transform: translate(-50%,-50%);
     background-color: #fff;
-    border: 1px solid #000;
     border-radius: 1rem;
-    left: 50%;
+    transition: 0.5s ease;
+    left: 150%;
     top: 50%;
 }
 
