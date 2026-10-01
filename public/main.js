@@ -1,4 +1,4 @@
-const API_URL = "https://creator-shop.onrender.com/";
+const API_URL = "https://creator-shop.onrender.com";
 
 class Cart {
     constructor(storageKey = "CART") {

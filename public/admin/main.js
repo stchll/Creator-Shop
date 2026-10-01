@@ -1,4 +1,4 @@
-const url = "";
+const url = "https://creator-shop.onrender.com";
 
 const tabBtns = document.querySelectorAll(".tabBtn");
 const pages = document.querySelectorAll(".page");
