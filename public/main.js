@@ -294,13 +294,13 @@ class CartModal {
     }
 
     open() {
-        this.section.style.display = "flex";
+        this.section.style.left = "50%"
         
         Blru.set(true);
     }
 
     close() {
-        this.section.style.display = "none";
+        this.section.style.left = "150%"
         
         Blru.set(false);
     }
