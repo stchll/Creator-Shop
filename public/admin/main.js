@@ -173,7 +173,7 @@ createProductForm.addEventListener("submit", async (e) => {
             if (answer) {
                 reloadProducts();
 
-                productCreateModal.style.display = "none";
+                productCreateModal.style.left = "150%";
                 Blur.set(false);
             }
 
