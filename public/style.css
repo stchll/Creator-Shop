@@ -93,7 +93,7 @@ header .searchBox .top {
     justify-content: space-between;
     gap: 0.5rem;
     width: 100%;
-    height: 40px;
+    height: 2rem;
     padding: 0 0.9rem 0 1.2rem;
     background-color: #fff;
     border-radius: 0.6rem;
@@ -363,14 +363,15 @@ header .menuPage {
     max-width: 700px;
     height: 550px;
     position: fixed;
-    display: none;
+    display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
     transform: translate(-50%, -50%);
-    left: 50%;
+    left: 150%;
     top: 50%;
     gap: 1rem;
+    transition: 0.3s ease;
     background-color: #fff;
     border-radius: 1rem;
     padding: 1.5rem;
@@ -518,11 +519,13 @@ header .menuPage {
     justify-content: center;
     position: fixed;
     transform: translate(-50%, -50%);
-    left: 50%; top: 50%;
+    left: -50%; top: 50%;
     background-color: #fff;
     padding: 1.5rem;
     gap: 1rem;
+    transition: 0.3s ease;
     border-radius: 1rem;
+    overflow: hidden;
 }
 
 .orderForm .top {
@@ -570,12 +573,12 @@ header .menuPage {
     display: flex;
     flex-direction: column;
     width: 70%;
-
 }
 
 .orderForm .container .form .field input {
     width: 100%;
     padding: 0.2rem 0.5rem;
+    outline: none;
 }   
 
 .orderForm .container .form .field label {

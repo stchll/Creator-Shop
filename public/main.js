@@ -361,13 +361,13 @@ class OrderForm {
     }
 
     open() {
-        this.page.style.display = "flex";
+        this.page.style.left = "50%"
         
         Blru.set(true);
     }
 
     close() {
-        this.page.style.display = "none";
+        this.page.style.left = "-50%"
         
         Blru.set(false);
 
