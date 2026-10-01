@@ -5,13 +5,22 @@
     font-family: "Montserrat";
 }
 
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
 .wrap {
     width: 100%;
     min-height: 100dvh;
     display: flex;
     flex-direction: column;
-
-
 }
 
 .welcomePage {
@@ -30,10 +39,10 @@ header {
     width: 100%;
     height: 15dvh;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     position: relative;
-    gap: 2rem;
+    padding: 0 8.2vw;
 }
 
 header .logo a {
@@ -325,7 +334,10 @@ header .menuPage {
     width: 100%;
     height: 100dvh;
     position: fixed;
-    display: none;
+    display: block;
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.5s ease;
     backdrop-filter: blur(10px);
 }
 
@@ -336,7 +348,7 @@ header .menuPage {
 
     position: fixed;
 
-    left: clamp(15px, 3vw, 30px);
+    left: 8.2vw;
     bottom: clamp(15px, 3vw, 30px);
 
     background-color: #F5A006;
@@ -349,28 +361,34 @@ header .menuPage {
 .cart {
     width: 90%;
     max-width: 700px;
-    height: 80dvh;
+    height: 550px;
     position: fixed;
     display: none;
     flex-direction: column;
     align-items: center;
-    justify-content: space-around;
+    justify-content: space-between;
     transform: translate(-50%, -50%);
     left: 50%;
     top: 50%;
+    gap: 1rem;
     background-color: #fff;
     border-radius: 1rem;
-    padding: 1rem;
-    box-shadow: 0 0 30px #33333388;
-    border: 2px solid #000;
+    padding: 1.5rem;
 }
 
 .cart .top {
     width: 100%;
-    padding: 5px 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.cart .top h3 {
+    font-size: 1.5rem;
+}
+
+.cart .top h3 i {
+    color: #F5A006;
 }
 
 .cart .top button {
@@ -381,11 +399,13 @@ header .menuPage {
     background-color: #f53c3c;
     border: none;
     cursor: pointer;
+    color: #fff;
 }
 
 .cart .products {
     width: 100%;
-    height: 80%;
+    flex: 1;
+    overflow-y: auto;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -397,57 +417,56 @@ header .menuPage {
     width: 100%;
     height: 80px;
     display: flex;
+    border-radius: 1rem;
     justify-content: space-between;
     border: 1px solid #000;
 }
 
-.cart .products .card .imagePart {
-    width: 15%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.cart .products .card .productImg {
+    border-radius: 1rem 0 0 1rem;
 }
 
-.cart .products .card .imagePart img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.cart .products .card .dataPart {
-    width: 30%;
-    height: 100%;
+.cart .products .card .productInfo {
+    width: 50%;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
 }
 
-.cart .products .card .dataPart h3 {
-    font-size: 15px;
+.cart .products .card .productInfo h3 {
+    font-size: 1.3rem;
 }
 
-.cart .products .card .dataPart p {
-    font-size: 10px;
+.cart .products .card .productInfo p {
+    font-size: 1rem;
 }
 
 .cart .products .card .quantityPart {
-    width: 10%;
-    height: 100%;
+    width: 20%;
     display: flex;
     justify-content: center;
     align-items: center;
+    gap: 0.3rem;
 
 }
 
 .cart .products .card .quantityPart input {
-    width: 100%;
+    width: 40%;
+    height: 2rem;
     text-align: center;
+    outline: none;
+}
+
+.cart .products .card .quantityPart button {
+    padding: 0.5rem;
+    cursor: pointer;
+    border: none;
+    background-color: transparent;
+    border-radius: 0.5rem;
 }
 
 .cart .products .card .controlPart {
     width: 10%;
-    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -456,77 +475,83 @@ header .menuPage {
 .cart .products .card .controlPart button {
     padding: 10px;
     color: #fff;
-    background-color: #f53c3c;
+    background-color: #F5A006;
     cursor: pointer;
     border: none;
-    border-radius: 1rem;
+    border-radius: 0.5rem;
 }
 
 .cart hr {
     width: 90%;
-
+    border: 1px solid #3333333a;
 }
 
 .cart .footer {
+    width: 100%;
     display: flex;
-    justify-content: space-around;
+    justify-content: center;
     align-items: center;
-    gap: 2rem;
+    gap: 3rem;
 }
 
 
 .cart .footer button {
     padding: 0.5rem 2rem;
-    border-radius: 1rem;
+    font-size: 0.8rem;
+    border-radius: 0.5rem;
     cursor: pointer;
     border: none;
     background-color: #F5A006;
 }
 
 .cart .footer .clearBtn {
-    background-color: red;
+    background-color: #555;
+    color: #fff;
 }
-
-.cart .footer button.buyBtn {
-    background-color: rgb(194, 255, 101);
-}
-
 
 .orderForm {
-    width: 400px;
-    height: 40dvh;
-    display: none;
+    width: 450px;
+    height: 350px;
+    display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     position: fixed;
     transform: translate(-50%, -50%);
-    left: 50%;
-    top: 50%;
+    left: 50%; top: 50%;
     background-color: #fff;
-    border: 2px solid #000;
-    padding: 1rem;
+    padding: 1.5rem;
+    gap: 1rem;
     border-radius: 1rem;
 }
 
-.orderForm .closeBtn {
-    position: relative;
-    left: 50%;
-    top: 5%;
-    width: 40px;
-    height: 40px;
-    transform: translate(-50%, -50%);
-    background-color: #f53c3c;
-    border-radius: 0.5rem;
-    font-size: 1.5rem;
-    border: none;
-    cursor: pointer;
+.orderForm .top {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 
+.orderForm .top button {
+    padding: 0.5rem;
+    background-color: #f53c3c;
+    color: #fff;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+}
+
+.orderForm .top h3 {
+    font-size: 1.5rem;
+}  
+
+.orderForm .top h3 i {
+    color: #F5A006;
 }
 
 .orderForm .container {
     width: 100%;
-    height: 100%;
+    flex: 1;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -538,11 +563,30 @@ header .menuPage {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-between;
+    justify-content: space-around;
+}
+
+.orderForm .container .form .field {
+    display: flex;
+    flex-direction: column;
+    width: 70%;
+
+}
+
+.orderForm .container .form .field input {
+    width: 100%;
+    padding: 0.2rem 0.5rem;
+}   
+
+.orderForm .container .form .field label {
+    font-size: 0.8rem;
+
+    color: #333333a0;
 }
 
 .orderForm .container .form button {
-    padding: 0.5rem 1rem;
+    padding: 0.5rem 1.5rem;
+    font-size: 0.9rem;
     background-color: #F5A006;
     border: none;
     border-radius: 1rem;

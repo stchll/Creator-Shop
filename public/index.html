@@ -101,38 +101,65 @@
 
         <section class="blurLayer"></section>
 
+
         <section class="cart">
             <div class="top">
-                <h3>Cart</h3>
+                <h3>
+                    <i class="fa-solid fa-basket-shopping"></i>
+                    Cart
+                </h3>
 
-                <button id="cartClose">X</button>
+                <button id="cartClose">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
             </div>
 
-            <div class="products" id="cartProductsList"></div>
+            <div class="products" id="cartProductsList">
+
+            </div>
 
             <hr>
 
             <div class="footer">
                 <h3 id="cartBillLabel">Bill: 100$</h3>
 
-                <button id="checkoutCart" id="buyBtn"><i class="fa-solid fa-credit-card"></i> Checkout</button>
+                <button id="checkoutCart"><i class="fa-solid fa-credit-card"></i> Checkout</button>
                 <button id="clearCart" class="clearBtn"><i class="fa-solid fa-trash"></i> Clear All</button>
             </div>
         </section>
 
+
         <section class="orderForm">
-            <button id="closeOrderForm" class="closeBtn">X</button>
+            <div class="top">
+                <h3><i class="fa-solid fa-box"></i> Packing Order</h3>
+
+                <button id="closeOrderForm" class="closeBtn">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
 
             <div class="container">
                 <form id="orderForm" class="form orderPage">
-                    <input type="text" placeholder="Whats your name?" name="name" required>
+                    <div class="field">
+                        <label for="name">Your name: </label>
 
-                    <input type="email" placeholder="Type your email" name="email" required>
+                        <input type="text" name="name" required>
+                    </div>
 
-                    <input type="text" name="adress" placeholder="Fill out your adress" required>
+                    <div class="field">
+                        <label for="email">Fill out email: </label>
+
+                        <input type="email" name="email" required>
+                    </div>
+
+                    <div class="field">
+                        <label for="adress">Adress here: </label>
+
+                        <input type="text" name="adress" required>
+                    </div>
 
                     <button type="submit">
-                        <i class="fa-solid fa-receipt"></i> 
+                        <i class="fa-solid fa-receipt"></i>
                         Make Order
                     </button>
                 </form>

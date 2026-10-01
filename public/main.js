@@ -1,5 +1,23 @@
 const API_URL = "https://creator-shop.onrender.com";
 
+class BlurController {
+    constructor() {
+        this.section = document.querySelector(".blurLayer");
+
+        this.active = false;
+    }
+
+    set(flag) {
+        if (flag == true) {
+            this.section.style.opacity = 1;
+        } else {
+            this.section.style.opacity = 0;
+        }
+
+        this.active = flag;
+    }
+}
+
 class Cart {
     constructor(storageKey = "CART") {
         this.storageKey = storageKey;
@@ -133,22 +151,19 @@ class CartUI {
             : "";
 
         card.innerHTML = `
-            <div class="imagePart">
-                <img src="${imageURL}" alt="Photo">
-            </div>
+            <img src="${imageURL}" alt="Photo" class="productImg">
 
-            <div class="dataPart">
+            <div class="productInfo">
                 <h3>${product.title}</h3>
                 <p>${product.price}$</p>
             </div>
 
             <div class="quantityPart">
-                <input
-                    class="quantityInput"
-                    type="number"
-                    min="1"
-                    value="${product.quantity}"
-                >
+                <button class="quantityMinus"><i class="fa-solid fa-minus"></i></button>
+
+                <input class="quantityInput" type="number" min="1" value="${product.quantity}">
+
+                <button class="quantityAdd"><i class="fa-solid fa-plus"></i></button>
             </div>
 
             <div class="controlPart">
@@ -265,9 +280,6 @@ class CartModal {
         this.closeBtn =
             document.getElementById("cartClose");
 
-        this.blurLayer =
-            document.querySelector(".blurLayer");
-
         this.openBtn.addEventListener("click", () => {
             this.orderForm.close()
 
@@ -283,12 +295,14 @@ class CartModal {
 
     open() {
         this.section.style.display = "flex";
-        this.blurLayer.style.display = "block";
+        
+        Blru.set(true);
     }
 
     close() {
         this.section.style.display = "none";
-        this.blurLayer.style.display = "none";
+        
+        Blru.set(false);
     }
 }
 
@@ -300,7 +314,6 @@ class OrderForm {
         this.cart = cart;
 
         this.orderPages = document.querySelectorAll(".orderPage");
-        this.blurLayer = document.querySelector(".blurLayer");
 
         this.completePage = document.getElementById("complateOrderForm");
 
@@ -349,12 +362,14 @@ class OrderForm {
 
     open() {
         this.page.style.display = "flex";
-        this.blurLayer.style.display = "block";
+        
+        Blru.set(true);
     }
 
     close() {
         this.page.style.display = "none";
-        this.blurLayer.style.display = "none";
+        
+        Blru.set(false);
 
         this.orderPages.forEach(el => {
             el.style.display = "none"
@@ -449,7 +464,7 @@ class SearchBar {
                         </div>
                         
                     `
-                    card.addEventListener("click",(e) => {
+                    card.addEventListener("click", (e) => {
                         cart.add(res)
 
                         cartUI.render();
@@ -461,6 +476,8 @@ class SearchBar {
         }
     }
 }
+
+const Blru = new BlurController();
 
 const checkoutCartBtn = document.getElementById("checkoutCart");
 const clearCartBtn = document.getElementById("clearCart");
@@ -505,5 +522,5 @@ clearCartBtn.addEventListener("click", (e) => {
 
     cart.save();
 
-    cart.render();
+    cartUI.render();
 })
