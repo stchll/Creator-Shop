@@ -1,0 +1,595 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Montserrat";
+}
+
+.wrap {
+    width: 100%;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+
+
+}
+
+.welcomePage {
+    width: 100%;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-image: url("./img/homeBanner.png");
+    background-size: cover;
+    background-position: top;
+    background-repeat: no-repeat;
+}
+
+header {
+    width: 100%;
+    height: 15dvh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    gap: 2rem;
+}
+
+header .logo a {
+    font-family: "Montserrat Alternates";
+    font-size: clamp(1.5rem, 2.5vw, 2rem);
+    color: #fff;
+    text-decoration: none;
+}
+
+header .logo a span {
+    color: orange;
+}
+
+header .navbar {
+    display: flex;
+    gap: 1rem;
+}
+
+header li {
+    list-style: none;
+    color: #E6E7E8;
+    font-size: 1rem;
+    font-weight: 200;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+header li:hover {
+    color: orange;
+}
+
+header .right {
+    width: 40%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}
+
+header .searchBox {
+    position: relative;
+    width: min(330px, 80vw);
+}
+
+header .searchBox .top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    width: 100%;
+    height: 40px;
+    padding: 0 0.9rem 0 1.2rem;
+    background-color: #fff;
+    border-radius: 0.6rem;
+    border: 2px solid transparent;
+}
+
+header .searchBox input {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    outline: none;
+    background-color: transparent;
+    font-size: 0.9rem;
+    font-weight: 400;
+    color: #333;
+}
+
+header .searchBox .results {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    width: 100%;
+    max-height: 260px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    border-color: 0.6rem;
+    gap: 0.5rem;
+
+    background-color: transparent;
+}
+
+.searchBox .results .card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.7rem 1rem;
+    font-size: 0.9rem;
+    border-radius: 0.6rem;
+    color: #333;
+    transition: 0.2s ease;
+    background-color: #fff;
+}
+
+.searchBox .results .card .imagePart {
+    width: 20%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.searchBox .results .card .imagePart img {
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
+}
+
+.searchBox .results .card .dataPart {
+    width: 30%;
+    height: 100%;
+}
+
+.searchBox .results .card .contolPart button {
+    padding: 0.3rem;
+    cursor: pointer;
+}
+
+header .right .exploreBtn {
+    background-color: #F5A006;
+    border: none;
+    color: #000;
+    padding: 0.4rem 1.4rem;
+    border-radius: 0.6rem;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+header .burger {
+    width: 40px;
+    height: 40px;
+    background-color: transparent;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    font-size: 1rem;
+    border: none;
+    cursor: pointer;
+    z-index: 3;
+    color: #fff;
+    transition: 0.3s ease;
+}
+
+header .menuPage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    transform: translate(-50%,-50%);
+    gap: 3rem;
+    top: 50%;
+    left: 150%;
+    width: 100%;
+    height: 100dvh;
+    transition: 0.3s ease;
+    background-color: rgba(0,0,0,0.4);
+    backdrop-filter: blur(20px);
+}
+
+.welcomePage .homePage {
+    width: 100%;
+    height: 85dvh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.homePage .homeContent {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.homePage .homeContent h1 {
+    color: #E6E7E8;
+    font-size: clamp(2rem, 3.5vw, 4rem);
+}
+
+.homePage .homeContent h1 span {
+    color: #DE9716;
+}
+
+.homePage .homeContent p {
+    color: #E6E7E8;
+    font-size: clamp(0.8rem,1vw,2rem);
+}
+
+.homePage .homeContent .buttons {
+    display: flex;
+    gap: 1rem;
+    font-size: 1.5rem;
+}
+
+.homePage .homeContent .buttons button {
+    padding: 0.5rem 2.5rem;
+    cursor: pointer;
+    font-size: 1.2rem;
+    border-radius: 10px;
+    font-weight: 600;
+    background-color: #F5A006;
+    border: none;
+}
+
+.homePage .homeContent .buttons .border-btn {
+    background-color: transparent;
+    border: 2px solid #F5A006;
+    color: #F5A006;
+}
+
+.productsPage {
+    width: 100%;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.productsPage .titlePart {
+    width: 100%;
+    height: 10dvh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.productsPage .titlePart h2 span {
+    color: #F5A006;
+}
+
+.productsPage .productsPart {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-around;
+    gap: 1rem;
+}
+
+.productsPart .card {
+    width: 300px;
+    height: 350px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem;
+    border: 1px solid #333;
+}
+
+.productsPart .card .imagePart {
+    width: 100%;
+    height: 60%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.productsPart .card .imagePart img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.productsPart .card .dataPart {
+    width: 100%;
+    height: 30%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.productsPart .card .buttonsPart {
+    width: 100%;
+    height: 10%;
+    display: flex;
+    align-items: center;
+}
+
+.productsPart .card .buttonsPart button {
+    padding: 0.3rem 0.8rem;
+    background-color: #F5A006;
+    border: none;
+    cursor: pointer;
+}
+
+.blurLayer {
+    width: 100%;
+    height: 100dvh;
+    position: fixed;
+    display: none;
+    backdrop-filter: blur(10px);
+}
+
+.wrap .cartBtn {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+
+    position: fixed;
+
+    left: clamp(15px, 3vw, 30px);
+    bottom: clamp(15px, 3vw, 30px);
+
+    background-color: #F5A006;
+    color: #fff;
+    font-size: 2rem;
+    cursor: pointer;
+    border: none;
+}
+
+.cart {
+    width: 90%;
+    max-width: 700px;
+    height: 80dvh;
+    position: fixed;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    transform: translate(-50%, -50%);
+    left: 50%;
+    top: 50%;
+    background-color: #fff;
+    border-radius: 1rem;
+    padding: 1rem;
+    box-shadow: 0 0 30px #33333388;
+    border: 2px solid #000;
+}
+
+.cart .top {
+    width: 100%;
+    padding: 5px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cart .top button {
+    width: 40px;
+    height: 40px;
+    font-size: 1.5rem;
+    border-radius: 0.5rem;
+    background-color: #f53c3c;
+    border: none;
+    cursor: pointer;
+}
+
+.cart .products {
+    width: 100%;
+    height: 80%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: auto;
+    gap: 1rem;
+}
+
+.cart .products .card {
+    width: 100%;
+    height: 80px;
+    display: flex;
+    justify-content: space-between;
+    border: 1px solid #000;
+}
+
+.cart .products .card .imagePart {
+    width: 15%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.cart .products .card .imagePart img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.cart .products .card .dataPart {
+    width: 30%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.cart .products .card .dataPart h3 {
+    font-size: 15px;
+}
+
+.cart .products .card .dataPart p {
+    font-size: 10px;
+}
+
+.cart .products .card .quantityPart {
+    width: 10%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.cart .products .card .quantityPart input {
+    width: 100%;
+    text-align: center;
+}
+
+.cart .products .card .controlPart {
+    width: 10%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.cart .products .card .controlPart button {
+    padding: 10px;
+    color: #fff;
+    background-color: #f53c3c;
+    cursor: pointer;
+    border: none;
+    border-radius: 1rem;
+}
+
+.cart hr {
+    width: 90%;
+
+}
+
+.cart .footer {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    gap: 2rem;
+}
+
+
+.cart .footer button {
+    padding: 0.5rem 2rem;
+    border-radius: 1rem;
+    cursor: pointer;
+    border: none;
+    background-color: #F5A006;
+}
+
+.cart .footer .clearBtn {
+    background-color: red;
+}
+
+.cart .footer button.buyBtn {
+    background-color: rgb(194, 255, 101);
+}
+
+
+.orderForm {
+    width: 400px;
+    height: 40dvh;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    transform: translate(-50%, -50%);
+    left: 50%;
+    top: 50%;
+    background-color: #fff;
+    border: 2px solid #000;
+    padding: 1rem;
+    border-radius: 1rem;
+}
+
+.orderForm .closeBtn {
+    position: relative;
+    left: 50%;
+    top: 5%;
+    width: 40px;
+    height: 40px;
+    transform: translate(-50%, -50%);
+    background-color: #f53c3c;
+    border-radius: 0.5rem;
+    font-size: 1.5rem;
+    border: none;
+    cursor: pointer;
+
+}
+
+.orderForm .container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.orderForm .container .form {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.orderForm .container .form button {
+    padding: 0.5rem 1rem;
+    background-color: #F5A006;
+    border: none;
+    border-radius: 1rem;
+    cursor: pointer;
+}
+
+.orderForm .container .process {
+    width: 100%;
+    height: 100%;
+    display: none;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.orderForm .container .complate {
+    width: 100%;
+    height: 100%;
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+.orderForm .container .fail {
+    width: 100%;
+    height: 100%;
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+@media screen and (max-width: 1100px) {
+    header .burger {
+        display: flex;
+    }
+
+    header .right .searchBox {
+        display: none;
+    }
+
+    header .navbar {
+        display: none;
+    }
+
+    header .menuPage .navbar {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+}

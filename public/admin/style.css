@@ -1,0 +1,245 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Montserrat";
+}
+
+.wrap {
+    width: 100%;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+header {
+    width: 100%;
+    height: 15dvh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.tabsContainer {
+    width: 100%;
+    height: 10dvh;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.tabBtn {
+    padding: 0.5rem 1rem;
+    border: 1rem;
+    border-radius: 1rem;
+    cursor: pointer;
+}
+
+.tabBtn.active {
+    background-color: orange;
+}
+
+.pageContainer {
+    width: 100%;
+    min-height: 75dvh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.page {
+    display: none;
+}
+
+.page.active {
+    display: flex;
+}
+
+.pageContainer .productsPage {
+    width: 100%;
+    min-height: 75dvh;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 3rem;
+}
+
+.productsPage .controlContainer {
+    width: 100%;
+    height: 10dvh;
+    display: flex;
+    gap: 1rem;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.productsPage .controlContainer .addBtn {
+    padding: 0.5rem 1rem;
+    border-radius: 1rem;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.productsPage .controlContainer .addBtn:hover {
+    background-color: #90ec06;
+    box-shadow: 0 0 20px #90ec0683;
+}
+
+.productsTable {
+    border-collapse: collapse;
+    border: 1px solid #000;
+}
+
+th,td {
+    border: 1px solid #000;
+    padding: 1rem;
+    text-align: center;
+} 
+
+td .deleteBtn {
+    padding: 0.5rem;
+    font-size: 1rem;
+    background-color: red;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+}
+
+td img {
+    width: 100px;
+    object-fit: contain;
+}
+
+.blurLayer {
+    width: 100%;
+    height: 100%;
+    display: none;
+    position: fixed;
+    background-color: rgba(0,0,0,0.5);
+    backdrop-filter: blur(10px);
+}
+
+.pageContainer .ordersPage {
+    width: 100%;
+    min-height: 75dvh;
+    background-color: blue;
+}
+
+.productChangeModal {
+    width: 450px;
+    height: 500px;
+    display: none;
+    padding: 1rem;
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+    transform: translate(-50%,-50%);
+    background-color: #fff;
+    border: 1px solid #000;
+    border-radius: 1rem;
+    left: 50%;
+    top: 50%;
+}
+
+.productChangeModal .top {
+    width: 100%;
+    height: 10%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.productChangeModal .top h3 {
+    font-size: 1.5rem;
+}
+
+.productChangeModal .top h3 i {
+    color: orange;
+}
+
+.productChangeModal .top button {
+    width: 40px;
+    height: 40px;
+    background-color: red;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.productChangeModal form {
+    width: 100%;
+    height: 90%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.productChangeModal form .field {
+    width: 60%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.productChangeModal form .field label {
+    display: block;
+    font-size: 0.7rem;
+}
+
+.productChangeModal form .field input,
+.productChangeModal form .field textarea {
+    width: 100%;
+    padding: 0.2rem;
+    outline: none;
+    max-width: 100%;
+}
+
+.productChangeModal form .field textarea {
+    height: 100px;
+    resize: none;
+}
+
+.productChangeModal form button {
+    padding: 0.5rem 5rem;
+    background-color: orange;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+}
+
+.deleteProductModal {
+    padding: 1.5rem 3.5rem;
+    background-color: #fff;
+    border-radius: 1rem;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    position: fixed;
+    transform: translate(-50%,-50%);
+    top: 50%;
+    left: 50%;
+    gap: 1rem;
+}
+
+.deleteProductModal .control {
+    gap: 2rem;
+
+}
+
+.deleteProductModal .control button {
+    padding: 0.5rem 2rem;
+    background-color: red;
+    border: none;
+    border-radius: 1rem;
+    cursor: pointer;
+}
+
+.deleteProductModal .control .cancelBtn {
+    background-color: #d1d1d1;
+}
