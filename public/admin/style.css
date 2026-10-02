@@ -22,6 +22,10 @@ header {
     align-items: center;
 }
 
+header h2 span {
+    color: #F5A006;
+}
+
 .tabsContainer {
     width: 100%;
     height: 10dvh;
@@ -140,7 +144,8 @@ td img {
 }
 
 .productChangeModal {
-    width: 450px;
+    width: 90%;
+    max-width: 450px;
     height: 500px;
     display: flex;
     padding: 1rem;
