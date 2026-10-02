@@ -40,7 +40,7 @@ mongoose.connect(process.env.DATABASE_URL)
     .then(() => {
         console.log("Mongo Has Already Connected!");
     })
-    .catch((eroor) => {
+    .catch((error) => {
         console.error(error);
     });
 
@@ -88,7 +88,7 @@ app.post("/order", async (req, res) => {
 
         PRODUCTS: ${products} 
 
-        TOTALðŸ“¦: ${total}$`;
+        TOTAL📦: ${total}$`;
 
     await bot.telegram.sendMessage(
         process.env.TELEGRAM_CHAT_ID,
@@ -120,7 +120,7 @@ const uploadToCloudinary = (fileBuffer) => {
 app.post("/product", upload.single("image"), async (req, res) => {
     const data = req.body;
 
-    const imagePath = "";
+    let imagePath = "";
 
     if (req.file) {
         const result = await uploadToCloudinary(req.file.buffer);
