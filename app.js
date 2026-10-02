@@ -98,10 +98,34 @@ app.post("/order", async (req, res) => {
     res.status(200).json({ message: "Sucsessfull!" })
 })
 
+const uploadToCloudinary = (fileBuffer) => {
+    return new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+            {
+                folder: "creator-shop"
+            },
+            (error, result) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(result);
+                }
+            }
+        );
+
+        stream.end(fileBuffer);
+    });
+};
+
 app.post("/product", upload.single("image"), async (req, res) => {
     const data = req.body;
 
-    const imagePath = req.file ? req.file.path : "";
+    const imagePath = "";
+
+    if (req.file) {
+        const result = await uploadToCloudinary(req.file.buffer);
+        imagePath = result.secure_url
+    }
 
     const newProduct = new Product({
         title: data.title,
