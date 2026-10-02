@@ -76,12 +76,14 @@ app.post("/order", async (req, res) => {
 
         ${index + 1}. ${product.title}
         Price: ${product.price}$
-        Quantity: ${product.quantity}`; }).join("\n\n");
+        Quantity: ${product.quantity}`;
+    }).join("\n\n");
 
-        const total = data.products.reduce((sum, product) => {
-            return sum + product.price * product.quantity; }, 0);
+    const total = data.products.reduce((sum, product) => {
+        return sum + product.price * product.quantity;
+    }, 0);
 
-        const message = `New Order: 
+    const message = `New Order: 
 
         Name: ${data.name}
         Email: ${data.email} 
@@ -119,26 +121,30 @@ const uploadToCloudinary = (fileBuffer) => {
 };
 
 app.post("/product", upload.single("image"), async (req, res) => {
-    const data = req.body;
+    try {
+        const data = req.body;
 
-    let imagePath = "";
+        let imagePath = "";
 
-    if (req.file) {
-        const result = await uploadToCloudinary(req.file.buffer);
-        imagePath = result.secure_url
+        if (req.file) {
+            const result = await uploadToCloudinary(req.file.buffer);
+            imagePath = result.secure_url
+        }
+
+        const newProduct = new Product({
+            title: data.title,
+            description: data.description,
+            price: Number(data.price),
+            image: imagePath,
+            imagePublicID: req.file ? result.public_id : null
+        });
+
+        const savedProducts = await newProduct.save();
+
+        res.status(200).json(savedProducts);
+    } catch (error) {
+        res.status(200).json({Message: "Server error with publishing product!"})
     }
-
-    const newProduct = new Product({
-        title: data.title,
-        description: data.description,
-        price: Number(data.price),
-        image: imagePath,
-        imagePublicID: req.file ? result.public_id : null
-    });
-
-    const savedProducts = await newProduct.save();
-
-    res.status(200).json(savedProducts);
 });
 
 app.delete("/product/:id", async (req, res) => {
