@@ -2,7 +2,6 @@ require("dotenv").config();
 
 const express = require("express");
 const cloudinary = require("cloudinary").v2;
-const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const path = require("path");
 const cors = require("cors");
 const bodyParser = require("body-parser");
@@ -20,16 +19,8 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-const storage = new CloudinaryStorage({
-    cloudinary: cloudinary,
-    params: {
-        folder: "creator-shop",
-        allowed_formats: ["jpg", "jpeg", "png", "webp"]
-    }
-});
-
 const upload = multer({
-    storage: storage
+    storage: multer.memoryStorage()
 });
 
 const PORT = process.env.PORT || 3000;
@@ -109,7 +100,7 @@ app.post("/order", async (req, res) => {
 
 app.post("/product", upload.single("image"), async (req, res) => {
     const data = req.body;
-    
+
     const imagePath = req.file ? req.file.path : "";
 
     const newProduct = new Product({
