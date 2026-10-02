@@ -438,11 +438,11 @@ header .menuPage {
 }
 
 .cart .products .card .productInfo h3 {
-    font-size: 1.3rem;
+    font-size: clamp(0.8rem,3vw,1.5rem);
 }
 
 .cart .products .card .productInfo p {
-    font-size: 1rem;
+    font-size: clamp(0.7rem,3vw,1.2rem);
 }
 
 .cart .products .card .quantityPart {
@@ -666,4 +666,102 @@ header .menuPage {
         width: 50%;
 
     }
+
+    .cart .products .card {
+        height: 70px;
+        justify-content: flex-start;
+
+    }
+
+    .cart .products .productImg {
+        width: 20%;
+        background-color: green;
+    }
+
+    .cart .products .card .productInfo {
+        width: 40%;
+        padding: 0.3rem;
+    }
+
+    .cart .products .card .quantityPart input {
+        width: 70%;
+        height: 20px;
+    }
+
+    .cart .products .card .quantityPart button {
+        display: none;
+    }
+
+    .cart .products .card .controlPart {
+        width: 20%;
+    }
 }
+
+/* 
+.cart .products .card {
+    width: 100%;
+    height: 80px;
+    display: flex;
+    border-radius: 1rem;
+    justify-content: space-between;
+    border: 1px solid #000;
+}
+
+.cart .products .card .productImg {
+    border-radius: 1rem 0 0 1rem;
+}
+
+.cart .products .card .productInfo {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.cart .products .card .productInfo h3 {
+    font-size: 1.3rem;
+}
+
+.cart .products .card .productInfo p {
+    font-size: 1rem;
+}
+
+.cart .products .card .quantityPart {
+    width: 20%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.3rem;
+
+}
+
+.cart .products .card .quantityPart input {
+    width: 40%;
+    height: 2rem;
+    text-align: center;
+    outline: none;
+}
+
+.cart .products .card .quantityPart button {
+    padding: 0.5rem;
+    cursor: pointer;
+    border: none;
+    background-color: transparent;
+    border-radius: 0.5rem;
+}
+
+.cart .products .card .controlPart {
+    width: 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.cart .products .card .controlPart button {
+    padding: 10px;
+    color: #fff;
+    background-color: #F5A006;
+    cursor: pointer;
+    border: none;
+    border-radius: 0.5rem;
+} */
