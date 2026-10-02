@@ -245,7 +245,8 @@ class ProductUI {
 
             <div class="buttonsPart">
                 <button class="addToCart">
-                    <i class="fa-solid fa-basket-shopping"></i> Add To Cart
+                    <i class="fa-solid fa-basket-shopping"></i> 
+                    Add To Cart
                 </button>
             </div>
         `;

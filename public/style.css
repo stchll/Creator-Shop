@@ -284,6 +284,7 @@ header .menuPage {
     align-items: center;
     justify-content: space-around;
     gap: 1rem;
+    padding: 1rem;
 }
 
 .productsPart .card {
@@ -291,6 +292,7 @@ header .menuPage {
     height: 350px;
     display: flex;
     flex-direction: column;
+    border-radius: 1rem;
     align-items: center;
     padding: 1rem;
     border: 1px solid #333;
@@ -308,6 +310,7 @@ header .menuPage {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    border-radius: 1rem;
 }
 
 .productsPart .card .dataPart {
@@ -326,10 +329,22 @@ header .menuPage {
 }
 
 .productsPart .card .buttonsPart button {
-    padding: 0.3rem 0.8rem;
+    padding: 0.5rem 0.8rem;
+    font-size: 0.9rem;
     background-color: #F5A006;
     border: none;
     cursor: pointer;
+    border-radius: 1rem;
+    transition: 0.4s ease;
+}
+
+.productsPart .card .buttonsPart button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px #F5A006;
+}
+
+.productsPart .card .buttonsPart button:active {
+    transform: scale(1);
 }
 
 .blurLayer {
@@ -347,6 +362,7 @@ header .menuPage {
     width: 60px;
     height: 60px;
     border-radius: 50%;
+    box-shadow:  0 0 5rem #f8c50c;
 
     position: fixed;
 
@@ -354,10 +370,27 @@ header .menuPage {
     bottom: clamp(15px, 3vw, 30px);
 
     background-color: #F5A006;
+    transition: 0.4s ease;
     color: #fff;
     font-size: 2rem;
     cursor: pointer;
     border: none;
+}
+
+.wrap .cartBtn i {
+    transition: 0.4s ease;
+}
+
+.wrap .cartBtn:hover {
+    transform: scale(1.1);
+}
+
+.wrap .cartBtn:active {
+    transform: scale(1);
+}
+
+.wrap .cartBtn:hover i {
+    transform: rotateZ(15deg);
 }
 
 .cart {
@@ -429,6 +462,7 @@ header .menuPage {
 
 .cart .products .card .productImg {
     border-radius: 1rem 0 0 1rem;
+    width: 15%;
 }
 
 .cart .products .card .productInfo {
