@@ -62,7 +62,7 @@ async function reloadProducts() {
     for (let product of data) {
         const tr = document.createElement("tr");
 
-        const imageSrc = product.image ? `${url}${product.image}` : "";
+        const imageSrc = product.image || "";
 
         console.log(data);
 

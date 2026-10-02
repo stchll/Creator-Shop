@@ -146,9 +146,7 @@ class CartUI {
 
         card.className = "card";
 
-        const imageURL = product.image
-            ? `${API_URL}${product.image}`
-            : "";
+        const imageURL = product.image || "";
 
         card.innerHTML = `
             <img src="${imageURL}" alt="Photo" class="productImg">
@@ -233,9 +231,7 @@ class ProductUI {
         card.className = "card";
         card.style.display = "flex";
 
-        const imageURL = product.image
-            ? `${API_URL}${product.image}`
-            : "";
+        const imageURL = product.image || "";
 
         card.innerHTML = `
             <div class="imagePart">
