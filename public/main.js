@@ -477,7 +477,37 @@ class SearchBar {
     }
 }
 
+class Navigation {
+    constructor() {
+        this.navs = document.querySelectorAll(".navhref");
+
+        this.hrefKey = "page-";
+
+        this.navs.forEach(nav => {
+            nav.addEventListener("click",async(e)=> {
+                e.preventDefault();
+                
+                if (!nav.dataset.page || nav.dataset.page == "") return
+
+                if (header.opened == true) {
+                    header.toggle()
+                }
+
+                const targetPage = document.querySelector(`.${nav.dataset.page}`)
+                
+                targetPage.scrollIntoView({
+                    behavior: "smooth",
+                })
+            })
+        })
+    }
+
+
+}
+
 const Blru = new BlurController();
+
+const Nav = new Navigation();
 
 const checkoutCartBtn = document.getElementById("checkoutCart");
 const clearCartBtn = document.getElementById("clearCart");

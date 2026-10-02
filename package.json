@@ -19,11 +19,13 @@
   },
   "homepage": "https://github.com/stchll/Creator-Shop#readme",
   "dependencies": {
+    "cloudinary": "^2.11.0",
     "cors": "^2.8.6",
     "dotenv": "^18.0.5",
     "express": "^5.2.1",
     "mongoose": "^9.10.3",
     "multer": "^2.4.0",
+    "multer-storage-cloudinary": "^4.0.0",
     "telegraf": "^4.16.3"
   }
 }

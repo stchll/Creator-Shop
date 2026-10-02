@@ -1,9 +1,10 @@
 require("dotenv").config();
 
 const express = require("express");
+const cloudinary = require("cloudinary").v2;
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const path = require("path");
 const cors = require("cors");
-const fs = require("fs");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const multer = require("multer");
@@ -13,32 +14,31 @@ const { Telegraf } = require("telegraf");
 const bot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN, {});
 bot.launch();
 
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
+const storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+        folder: "creator-shop",
+        allowed_formats: ["jpg", "jpeg", "png", "webp"]
+    }
+});
+
+const upload = multer({
+    storage: storage
+});
 
 const PORT = process.env.PORT || 3000;
 
 const app = express();
 
-const uploadDir = path.join(__dirname, "uploads");
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
-}
-
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, "public")));
-app.use("/uploads", express.static(uploadDir));
-
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, uploadDir)
-    },
-
-    filename: function (req, file, cb) {
-        cb(null, file.originalname)
-    }
-});
-
-const upload = multer({ storage: storage });
 
 dns.setServers([
     `1.1.1.1`,
@@ -109,7 +109,8 @@ app.post("/order", async (req, res) => {
 
 app.post("/product", upload.single("image"), async (req, res) => {
     const data = req.body;
-    const imagePath = req.file ? `/uploads/${req.file.filename}` : "";
+    
+    const imagePath = req.file ? req.file.path : "";
 
     const newProduct = new Product({
         title: data.title,
