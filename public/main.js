@@ -301,7 +301,6 @@ class CartModal {
         Blru.set(false);
     }
 }
-
 class OrderForm {
     constructor(cart) {
         this.form = document.getElementById("orderForm");
@@ -363,7 +362,7 @@ class OrderForm {
     }
 
     close() {
-        this.page.style.left = "-50%"
+        this.page.style.left = "-200%"
         
         Blru.set(false);
 
@@ -396,7 +395,7 @@ class Header {
             this.menuBtn.innerHTML = `<i class="fa-solid fa-xmark"></i>`;
             this.opened = true;
         } else {
-            this.menuPage.style.left = "150%";
+            this.menuPage.style.left = "200%";
             this.menuBtn.innerHTML = `<i class="fa-solid fa-bars"></i>`;
             this.opened = false;
         }
