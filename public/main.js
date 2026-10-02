@@ -492,6 +492,7 @@ class Navigation {
                 
                 targetPage.scrollIntoView({
                     behavior: "smooth",
+                    inline: "center"
                 })
             })
         })
