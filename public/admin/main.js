@@ -175,6 +175,9 @@ createProductForm.addEventListener("submit", async (e) => {
 
                 productCreateModal.style.left = "150%";
                 Blur.set(false);
+
+                console.log(answer);
+                
             }
 
         } catch (error) {

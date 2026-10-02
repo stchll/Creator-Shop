@@ -123,12 +123,13 @@ const uploadToCloudinary = (fileBuffer) => {
 app.post("/product", upload.single("image"), async (req, res) => {
     try {
         const data = req.body;
-
         let imagePath = "";
+        let publicID = null;
 
         if (req.file) {
             const result = await uploadToCloudinary(req.file.buffer);
-            imagePath = result.secure_url
+            imagePath = result.secure_url;
+            publicID = result.publicID
         }
 
         const newProduct = new Product({
@@ -136,7 +137,7 @@ app.post("/product", upload.single("image"), async (req, res) => {
             description: data.description,
             price: Number(data.price),
             image: imagePath,
-            imagePublicID: req.file ? result.public_id : null
+            imagePublicID: req.file ? publicID : null
         });
 
         const savedProducts = await newProduct.save();
