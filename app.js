@@ -48,7 +48,8 @@ const productSchema = new mongoose.Schema({
     title: String,
     description: String,
     price: Number,
-    image: String
+    image: String,
+    imagePublicID: String
 });
 
 const Product = mongoose.model("Product", productSchema);
@@ -132,6 +133,7 @@ app.post("/product", upload.single("image"), async (req, res) => {
         description: data.description,
         price: Number(data.price),
         image: imagePath,
+        imagePublicID: req.file ? result.public_id : null
     });
 
     const savedProducts = await newProduct.save();
@@ -140,7 +142,11 @@ app.post("/product", upload.single("image"), async (req, res) => {
 });
 
 app.delete("/product/:id", async (req, res) => {
-    await Product.findByIdAndDelete(req.params.id);
+    const product = await Product.findByIdAndDelete(req.params.id);
+
+    if (product && product.imagePublicID) {
+        await cloudinary.uploader.destroy(product.imagePublicID);
+    }
 
     res.status(200).json({ message: "Product deleted!" });
 })
