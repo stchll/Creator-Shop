@@ -124,6 +124,8 @@ class CartUI {
     constructor(cart) {
         this.cart = cart;
 
+        this.quantityLablel = document.getElementById("cartQuantityLabel");
+
         this.productsList =
             document.getElementById("cartProductsList");
 
@@ -153,7 +155,7 @@ class CartUI {
 
             <div class="productInfo">
                 <h3>${product.title}</h3>
-                <p>${product.price}$</p>
+                <p>${product.price}₴</p>
             </div>
 
             <div class="quantityPart">
@@ -197,7 +199,19 @@ class CartUI {
     updateBill() {
         const total = this.cart.getTotal();
 
-        this.billLabel.textContent = `${total}$`;
+        this.billLabel.textContent = `${total}₴`;
+
+        const totalQuantity = this.cart.getItems().reduce(
+            (sum, product) => sum + product.quantity,
+            0
+        );
+
+        if (totalQuantity < 100) {
+            this.quantityLablel.textContent = totalQuantity;
+        } else {
+            this.quantityLablel.textContent = "99"
+        }
+        
     }
 }
 
@@ -240,7 +254,7 @@ class ProductUI {
 
             <div class="dataPart">
                 <h3>${product.title}</h3>
-                <p>${product.price}$</p>
+                <p>${product.price}₴</p>
             </div>
 
             <div class="buttonsPart">
@@ -292,13 +306,13 @@ class CartModal {
 
     open() {
         this.section.style.left = "50%"
-        
+
         Blru.set(true);
     }
 
     close() {
         this.section.style.left = "150%"
-        
+
         Blru.set(false);
     }
 }
@@ -358,13 +372,13 @@ class OrderForm {
 
     open() {
         this.page.style.left = "50%"
-        
+
         Blru.set(true);
     }
 
     close() {
         this.page.style.left = "-200%"
-        
+
         Blru.set(false);
 
         this.orderPages.forEach(el => {
@@ -460,6 +474,13 @@ class SearchBar {
                         </div>
                         
                     `
+
+                    if (this.bar.value == "") {
+                        this.resultBox.innerHTML = ``;
+
+                        return
+                    }
+
                     card.addEventListener("click", (e) => {
                         cart.add(res)
 
@@ -480,9 +501,9 @@ class Navigation {
         this.hrefKey = "page-";
 
         this.navs.forEach(nav => {
-            nav.addEventListener("click",async(e)=> {
+            nav.addEventListener("click", async (e) => {
                 e.preventDefault();
-                
+
                 if (!nav.dataset.page || nav.dataset.page == "") return
 
                 if (header.opened == true) {
@@ -490,7 +511,7 @@ class Navigation {
                 }
 
                 const targetPage = document.querySelector(`.${nav.dataset.page}`)
-                
+
                 targetPage.scrollIntoView({
                     behavior: "smooth",
                     inline: "center"
