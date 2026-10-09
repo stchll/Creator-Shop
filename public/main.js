@@ -179,6 +179,12 @@ class CartUI {
         const quantityInput =
             card.querySelector(".quantityInput");
 
+        const quantityMinus = 
+            card.querySelector(".quantityMinus");
+
+        const quantityAdd = 
+            card.querySelector(".quantityAdd")
+
         deleteBtn.addEventListener("click", () => {
             this.cart.remove(product._id);
             this.render();
@@ -188,6 +194,24 @@ class CartUI {
             this.cart.setQuantity(
                 product._id,
                 quantityInput.value
+            );
+
+            this.render();
+        });
+
+        quantityMinus.addEventListener("click",() => {
+            this.cart.setQuantity(
+                product._id,
+                Number(quantityInput.value) - 1,
+            );
+
+            this.render();
+        });
+
+        quantityMinus.addEventListener("click",() => {
+            this.cart.setQuantity(
+                product._id,
+                Number(quantityInput.value) + 1,
             );
 
             this.render();
