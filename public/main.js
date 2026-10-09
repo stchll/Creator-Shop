@@ -551,7 +551,6 @@ const orderForm = new OrderForm(cart);
 const cartModal = new CartModal(orderForm, cart);
 
 
-
 cartUI.render();
 productUI.render();
 
