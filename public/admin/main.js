@@ -84,6 +84,8 @@ async function reloadOrders() {
             <td>nana</td>
             <td></td>
         `
+
+        ordeersList.appendChild(tr);
     }
 }
 
