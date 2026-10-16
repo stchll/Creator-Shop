@@ -10,6 +10,7 @@ const createModalOpen = document.getElementById("createModalOpen");
 const createModalClose = document.getElementById("changeProductModalClose")
 
 const productsList = document.getElementById("productsList");
+const ordeersList = document.getElementById("ordersList");
 
 const createProductBtn = document.getElementById("createProductBtn");
 
@@ -49,8 +50,47 @@ class BlurContoller {
 
 const Blur = new BlurContoller();
 
+async function getAPI(path) {
+    const response = await fetch(`${url}/${path}`, {
+        method: "GET",
+    });
+
+    if (!response.ok) {
+        return
+    }
+
+    const data = await response.json()
+
+    return data
+}
+
+async function reloadOrders() {
+    const orders = await getAPI("orders");
+
+    if (!orders) {
+        return
+    }
+
+    ordeersList.innerHTML = "";
+
+    for (let order of orders) {
+        const tr = document.createElement("tr");
+        
+        console.log(order);
+
+        tr.innerHTML = `
+            <td>${order.name}</td>
+            <td>nan</td>
+            <td>nana</td>
+            <td></td>
+        `
+    }
+}
+
+reloadOrders();
+
 async function reloadProducts() {
-    const data = await getProducts()
+    const data = await getAPI("products")
 
     if (!data) {
 
@@ -84,20 +124,6 @@ async function reloadProducts() {
 }
 
 reloadProducts()
-
-async function getProducts() {
-    const response = await fetch(`${url}/products`, {
-        method: "GET",
-    });
-
-    if (!response.ok) {
-        return
-    }
-
-    const data = await response.json()
-
-    return data
-}
 
 function deleteRequest(prodcutId) {
     deleteProductModal.style.display = "flex";
@@ -143,11 +169,9 @@ tabBtns.forEach(button => {
         const pageName = button.dataset.page;
 
         tabBtns.forEach(btn => btn.classList.remove("active"));
-
         pages.forEach(page => page.classList.remove("active"));
 
         button.classList.add("active");
-
         document.querySelector(`.${pageName}`).classList.add("active");
     })
 });

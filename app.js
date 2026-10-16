@@ -9,6 +9,8 @@ const mongoose = require("mongoose");
 const multer = require("multer");
 const dns = require("dns");
 const { Telegraf } = require("telegraf");
+const { type } = require("os");
+const { timeStamp } = require("console");
 
 const bot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN, {});
 bot.launch();
@@ -52,6 +54,64 @@ const productSchema = new mongoose.Schema({
     imagePublicID: String
 });
 
+const orderSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        require: true,
+    },
+    email: {
+        type: String,
+        required: true
+    },
+
+    adress: {
+        type: String,
+        required: true
+    },
+
+    products: [
+        {
+            productID: {
+                type: mongoose.Schema.Types.ObjectId,
+                required: true,
+            },
+
+            title: {
+                type: String,
+                required: true,
+            },
+
+            price: {
+                type: String,
+                required: true,
+            },
+
+            quantity: {
+                type: Number,
+                required: true,
+                min: 1,
+            }
+
+        }
+    ],
+
+    total: {
+        type: Number,
+        required: true,
+        min: 0,
+    },
+
+    status: {
+        type: String,
+        enum: ["Pending","Processing","Shipped","Delivered"],
+        default: "Pending"
+    },
+},
+    {timestamps: true}
+);
+
+const Order = mongoose.model("Order",orderSchema);
+
 const Product = mongoose.model("Product", productSchema);
 
 app.get("/", (req, res) => {
@@ -68,6 +128,12 @@ app.get("/products", async (req, res) => {
     res.status(200).json(products)
 });
 
+app.get("/orders", async(req,res) => {
+    const orders = await Order.find(req.query);
+
+    res.status(200).json(orders);
+})
+
 app.post("/order", async (req, res) => {
     const data = req.body;
 
@@ -82,6 +148,14 @@ app.post("/order", async (req, res) => {
     const total = data.products.reduce((sum, product) => {
         return sum + product.price * product.quantity;
     }, 0);
+
+    const newOrder = await Order.create({
+        name: data.name,
+        email: data.email,
+        adress: data.adress,
+        products,
+        total
+    });
 
     const message = `New Order: 
 

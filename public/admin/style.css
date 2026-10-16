@@ -53,14 +53,6 @@ header h2 span {
     align-items: center;
 }
 
-.page {
-    display: none;
-}
-
-.page.active {
-    display: flex;
-}
-
 .pageContainer .productsPage {
     width: 100%;
     min-height: 75dvh;
@@ -140,7 +132,18 @@ td img {
 .pageContainer .ordersPage {
     width: 100%;
     min-height: 75dvh;
-    background-color: blue;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    padding: 3rem;
+}
+
+.page {
+    display: none;
+}
+
+.page.active {
+    display: flex;
 }
 
 .productChangeModal {
