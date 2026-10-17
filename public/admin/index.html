@@ -8,9 +8,8 @@
 
     <link rel="stylesheet" href="./style.css">
 
-    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.css'
-        integrity='sha512-x9WwyMYBnlXMNQ6kQ/Lyzu1NqIhLQKL5Oq6xByfXuRj7s9CskyCbLv/1IjqzJmXwFXWr0ov6jBV7Qbc0hh9nHg=='
-        crossorigin='anonymous' />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        crossorigin="anonymous" />
 
     <link
         href="https://fonts.googleapis.com/css?family=Montserrat:100,200,300,regular,500,600,700,800,900,100italic,200italic,300italic,italic,500italic,600italic,700italic,800italic,900italic"
@@ -50,10 +49,11 @@
                     <table class="productsTable">
                         <thead>
                             <tr>
-                                <th>Фото</th>
-                                <th>Назва</th>
-                                <th>Опис</th>
-                                <th>Змінити</th>
+                                <th>Image</th>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Price</th>
+                                <th>Change</th>
                             </tr>
                         </thead>
 
@@ -67,10 +67,13 @@
                     <table class="productsTable">
                         <thead>
                             <tr>
-                                <th>Ім'я</th>
-                                <th>Пошта</th>
-                                <th>Адрес</th>
-                                <th>Сумма💸</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Adress</th>
+                                <th>Goods</th>
+                                <th>Bill</th>
+                                <th>Status</th>
+                                <th>Control</th>
                             </tr>
                         </thead>
 
@@ -83,40 +86,39 @@
         <div class="blurLayer"></div>
     </div>
 
-
-    <section class="productChangeModal">
+    <section class="productChangeModal" id="productModal">
         <div class="top">
             <h3><i class="fa-solid fa-file-circle-plus"></i> Create Product</h3>
 
             <button id="changeProductModalClose">X</button>
         </div>
 
-        <form id="productChangeModal">
+        <form id="productForm">
             <div class="field">
                 <label for="title">Product name:</label>
-                <input type="text" name="title" required>
+                <input type="text" name="title" id="title" required>
             </div>
 
             <div class="field">
                 <label for="description">Description:</label>
-
-                <textarea name="description" required></textarea>
+                <textarea name="description" id="description" required></textarea>
             </div>
-
 
             <div class="field">
                 <label for="price">Price: </label>
-
-                <input type="number" name="price" required>
+                <input type="number" name="price" id="price" required>
             </div>
 
-            <input type="file" name="image" required>
+            <div class="field">
+                <label for="image">Image:</label>
+                <input type="file" name="image" id="image" required>
+            </div>
 
             <button type="submit" id="productChangeBtn"><i class="fa-solid fa-boxes-packing"></i> Create</button>
         </form>
     </section>
 
-    <section class="deleteProductModal" id="deleteProdcutModal">
+    <section class="deleteProductModal" id="deleteProductModal">
         <div class="top">
             <h3>Do you want to delete it?</h3>
         </div>

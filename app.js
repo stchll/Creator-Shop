@@ -9,6 +9,7 @@ const mongoose = require("mongoose");
 const multer = require("multer");
 const dns = require("dns");
 const { Telegraf } = require("telegraf");
+const { message } = require("telegraf/filters");
 
 const bot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN, {});
 bot.launch();
@@ -32,9 +33,9 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, "public")));
 
 dns.setServers([
-    `1.1.1.1`,
-    `8.8.8.8`
-])
+    "1.1.1.1",
+    "8.8.8.8"
+]);
 
 mongoose.connect(process.env.DATABASE_URL)
     .then(() => {
@@ -55,50 +56,42 @@ const productSchema = new mongoose.Schema({
 const orderSchema = new mongoose.Schema({
     name: {
         type: String,
-        require: true,
+        required: true,
     },
     email: {
         type: String,
         required: true
     },
-
     adress: {
         type: String,
         required: true
     },
-
     products: [
         {
             id: {
                 type: mongoose.Schema.Types.ObjectId,
                 required: true,
             },
-
             title: {
                 type: String,
                 required: true,
             },
-
             price: {
-                type: String,
+                type: Number,
                 required: true,
             },
-
             quantity: {
                 type: Number,
                 required: true,
                 min: 1,
             }
-
         }
     ],
-
     total: {
         type: Number,
         required: true,
         min: 0,
     },
-
     status: {
         type: String,
         enum: ["Pending", "Processing", "Shipped", "Delivered"],
@@ -109,29 +102,25 @@ const orderSchema = new mongoose.Schema({
 );
 
 const Order = mongoose.model("Order", orderSchema);
-
 const Product = mongoose.model("Product", productSchema);
 
 app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "index.html"))
+    res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
 app.get("/admin", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "admin", "index.html"))
+    res.sendFile(path.join(__dirname, "public", "admin", "index.html"));
 });
 
 app.get("/products", async (req, res) => {
     const products = await Product.find(req.query);
-
-    res.status(200).json(products)
+    res.status(200).json(products);
 });
 
 app.get("/orders", async (req, res) => {
-    const orders = await Order.find(req.query);
-
+    const orders = await Order.find(req.query).sort({ createdAt: -1 });
     res.status(200).json(orders);
-})
-
+});
 
 app.post("/order", async (req, res) => {
     try {
@@ -142,7 +131,7 @@ app.post("/order", async (req, res) => {
         }
 
         const products = data.products.map(product => ({
-            id: product._id,
+            id: product._id || product.id,
             title: product.title,
             price: Number(product.price),
             quantity: Number(product.quantity)
@@ -191,7 +180,6 @@ TOTAL: ${total}$`;
     }
 });
 
-
 const uploadToCloudinary = (fileBuffer) => {
     return new Promise((resolve, reject) => {
         const stream = cloudinary.uploader.upload_stream(
@@ -220,7 +208,7 @@ app.post("/product", upload.single("image"), async (req, res) => {
         if (req.file) {
             const result = await uploadToCloudinary(req.file.buffer);
             imagePath = result.secure_url;
-            publicID = result.publicID
+            publicID = result.public_id;
         }
 
         const newProduct = new Product({
@@ -228,27 +216,42 @@ app.post("/product", upload.single("image"), async (req, res) => {
             description: data.description,
             price: Number(data.price),
             image: imagePath,
-            imagePublicID: req.file ? publicID : null
+            imagePublicID: publicID
         });
 
         const savedProducts = await newProduct.save();
 
         res.status(200).json(savedProducts);
     } catch (error) {
-        res.status(200).json({ Message: "Server error with publishing product!" })
+        console.error("PRODUCT CREATE ERROR:", error);
+        res.status(500).json({ message: "Server error with publishing product!" });
     }
 });
 
-app.delete("/product/:id", async (req, res) => {
-    const product = await Product.findByIdAndDelete(req.params.id);
+app.delete("/order/:id", async (req,res) => {
+    try {
+        const order = await Order.findByIdAndDelete(req.params.id);
 
-    if (product && product.imagePublicID) {
-        await cloudinary.uploader.destroy(product.imagePublicID);
+        res.status(200).json({message: "Order was deleted!"})
+    } catch(error) {
+        res.status(500).json({message: "Failed to delete order!"})
     }
-
-    res.status(200).json({ message: "Product deleted!" });
 })
+
+app.delete("/product/:id", async (req, res) => {
+    try {
+        const product = await Product.findByIdAndDelete(req.params.id);
+
+        if (product && product.imagePublicID) {
+            await cloudinary.uploader.destroy(product.imagePublicID);
+        }
+
+        res.status(200).json({ message: "Product deleted!" });
+    } catch (error) {
+        res.status(500).json({ message: "Failed to delete product" });
+    }
+});
 
 app.listen(PORT, () => {
     console.log(`Server start on ${PORT}`);
-})
+});

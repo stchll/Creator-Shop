@@ -1,226 +1,141 @@
-const url = "http://localhost:3000"; //"https://creator-shop.onrender.com";
-
 const tabBtns = document.querySelectorAll(".tabBtn");
 const pages = document.querySelectorAll(".page");
-
-const productCreateModal = document.querySelector(".productChangeModal");
-const createProductForm = document.getElementById("productChangeModal");
+const productsList = document.getElementById("productsList");
+const ordersList = document.getElementById("ordersList");
 
 const createModalOpen = document.getElementById("createModalOpen");
-const createModalClose = document.getElementById("changeProductModalClose")
+const productModal = document.getElementById("productModal");
+const changeProductModalClose = document.getElementById("changeProductModalClose");
+const blurLayer = document.querySelector(".blurLayer");
+const productForm = document.getElementById("productForm");
 
-const productsList = document.getElementById("productsList");
-const ordeersList = document.getElementById("ordersList");
+const deleteProductModal = document.getElementById("deleteProductModal");
+const deleteModalAccept = document.getElementById("deleteModalAccept");
+const deleteModalCancel = document.getElementById("deleteModalCancel");
 
-const createProductBtn = document.getElementById("createProductBtn");
+let productIdToDelete = null;
 
-const deleteProductModal = document.getElementById("deleteProdcutModal")
+tabBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+        tabBtns.forEach(b => b.classList.remove("active"));
+        pages.forEach(p => p.classList.remove("active"));
 
-const deleteProductAccept = document.getElementById("deleteModalAccept");
-const deleteProductCancel = document.getElementById("deleteModalCancel");
-
-
-let produnctToDelte = null;
-
-class BlurContoller {
-    constructor() {
-        this.section = document.querySelector(".blurLayer");
-
-        this.active = false;
-    }
-
-    toggle() {
-        if (this.active == true) {
-            this.section.style.opacity = 1;
-        } else {
-            this.section.style.opacity = 0;
-        }
-
-        this.active = !this.active;
-    }
-
-    set(flag) {
-        if (flag == true) {
-            this.section.style.opacity = 1;
-        } else {
-            this.section.style.opacity = 0;
-        }
-    }
-}
-
-const Blur = new BlurContoller();
-
-async function getAPI(path) {
-    const response = await fetch(`${url}/${path}`, {
-        method: "GET",
+        btn.classList.add("active");
+        const pageId = btn.getAttribute("data-page");
+        document.querySelector(`.${pageId}`).classList.add("active");
     });
-
-    if (!response.ok) {
-        return
-    }
-
-    const data = await response.json()
-
-    return data
-}
-
-async function reloadOrders() {
-    const orders = await getAPI("orders");
-
-    if (!orders) {
-        return
-    }
-
-    console.log(orders);
-    
-
-    ordeersList.innerHTML = "";
-
-    for (let order of orders) {
-        const tr = document.createElement("tr");
-        
-        console.log(order);
-
-        tr.innerHTML = `
-            <td>${order.name}</td>
-            <td>${order.email}</td>
-            <td>${order.adress}</td>
-            <td>
-                <button>View</button>
-            </td>
-        `
-
-        ordeersList.appendChild(tr);
-    }
-}
-
-reloadOrders();
-
-async function reloadProducts() {
-    const data = await getAPI("products")
-
-    if (!data) {
-
-        return
-    }
-
-    productsList.innerHTML = "";
-
-    for (let product of data) {
-        const tr = document.createElement("tr");
-
-        const imageSrc = product.image || "";
-
-        console.log(data);
-
-
-        tr.innerHTML = `
-            <td><img src="${imageSrc}"></td>
-            <td>${product.title}</td>
-            <td>${product.description}</td>
-            <td>
-                <button onclick="deleteRequest('${product._id}')" class="deleteBtn">
-                    <i class="fa-solid fa-trash"></i>
-                </button>
-            </td>
-        `
-
-        productsList.appendChild(tr);
-    }
-
-}
-
-reloadProducts()
-
-function deleteRequest(prodcutId) {
-    deleteProductModal.style.display = "flex";
-
-    Blur.set(true);
-
-    produnctToDelte = prodcutId
-}
-
-deleteProductAccept.addEventListener("click" , async (e) => {
-    e.preventDefault();
-
-    if (produnctToDelte != null) {
-        const response = await fetch(`${url}/product/${produnctToDelte}`,{
-            method: "DELETE",
-        });
-
-        if (!response.ok) {
-            return
-        }
-
-        const answer = await response.json();
-
-        if (answer) {
-            reloadProducts()
-            
-            deleteProductModal.style.display = "none";
-            Blur.set(false);
-        }
-    }
-})
-
-deleteProductCancel.addEventListener("click",() => {
-    deleteProductModal.style.display = "none";
-    Blur.set(false);
-    produnctToDelte = null
-})
-
-
-
-tabBtns.forEach(button => {
-    button.addEventListener("click", () => {
-        const pageName = button.dataset.page;
-
-        tabBtns.forEach(btn => btn.classList.remove("active"));
-        pages.forEach(page => page.classList.remove("active"));
-
-        button.classList.add("active");
-        document.querySelector(`.${pageName}`).classList.add("active");
-    })
 });
 
-createProductForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    const formData = new FormData(createProductForm);
-
-    if (formData) {
-        try {
-            const response = await fetch(`${url}/product`, {
-                method: "POST",
-                body: formData
-            });
-
-            if (!response.ok) {
-                return
-            }
-
-            const answer = await response.json();
-
-            if (answer) {
-                reloadProducts();
-
-                productCreateModal.style.left = "150%";
-                Blur.set(false);
-            }
-
-        } catch (error) {
-            console.error(error);
-        }
-    }
-})
-
 createModalOpen.addEventListener("click", () => {
-    productCreateModal.style.left = "50%";
+    productModal.classList.add("active");
+    blurLayer.classList.add("active");
+});
 
-    Blur.set(true);
-})
+const closeModal = () => {
+    productModal.classList.remove("active");
+    deleteProductModal.classList.remove("active");
+    blurLayer.classList.remove("active");
+    productForm.reset();
+};
 
-createModalClose.addEventListener("click", () => {
-    productCreateModal.style.left = "150%"
-    Blur.set(false);
-})
+changeProductModalClose.addEventListener("click", closeModal);
+blurLayer.addEventListener("click", closeModal);
+
+async function fetchProducts() {
+    try {
+        const response = await fetch("/products");
+        const products = await response.json();
+        productsList.innerHTML = "";
+
+        products.forEach(product => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td><img src="${product.image || ''}" alt=""></td>
+                <td>${product.title}</td>
+                <td>${product.description}</td>
+                <td>${product.price}$</td>
+                <td><button class="deleteBtn" data-id="${product._id}"><i class="fa-solid fa-trash"></i></button></td>
+            `;
+            productsList.appendChild(tr);
+        });
+
+        document.querySelectorAll(".deleteBtn").forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                productIdToDelete = e.currentTarget.getAttribute("data-id");
+                deleteProductModal.classList.add("active");
+                blurLayer.classList.add("active");
+            });
+        });
+    } catch (error) {
+        console.error("Failed to fetch products", error);
+    }
+}
+
+async function fetchOrders() {
+    try {
+        const response = await fetch("/orders");
+        const orders = await response.json();
+        ordersList.innerHTML = "";
+
+        orders.forEach(order => {
+            const productsHtml = order.products.map(p => `<div>${p.title} (${p.quantity}x)</div>`).join("");
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td>${order.name}</td>
+                <td>${order.email}</td>
+                <td>${order.adress}</td>
+                <td>${productsHtml}</td>
+                <td>${order.total}$</td>
+                <td>${order.status}</td>
+                <td>
+                    <button class="deleteBtn"><i class="fa-solid fa-trash"></i></button>
+                    <button class="editBtn"><i class="fa-solid fa-pen"></i></button>
+                </td>
+            `;
+            ordersList.appendChild(tr);
+        });
+    } catch (error) {
+        console.error("Failed to fetch orders", error);
+    }
+}
+
+productForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const formData = new FormData(productForm);
+
+    try {
+        const response = await fetch("/product", {
+            method: "POST",
+            body: formData
+        });
+
+        if (response.ok) {
+            closeModal();
+            fetchProducts();
+        }
+    } catch (error) {
+        console.error("Failed to create product", error);
+    }
+});
+
+deleteModalAccept.addEventListener("click", async () => {
+    if (!productIdToDelete) return;
+
+    try {
+        const response = await fetch(`/product/${productIdToDelete}`, {
+            method: "DELETE"
+        });
+
+        if (response.ok) {
+            closeModal();
+            fetchProducts();
+        }
+    } catch (error) {
+        console.error("Failed to delete product", error);
+    }
+});
+
+deleteModalCancel.addEventListener("click", closeModal);
+
+fetchProducts();
+fetchOrders();

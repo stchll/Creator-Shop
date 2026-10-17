@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crator Shop</title>
+    <title>Creator Shop</title>
 
     <link rel="stylesheet" href="./style.css">
 
@@ -15,9 +15,8 @@
         href="https://fonts.googleapis.com/css?family=Montserrat+Alternates:100,100italic,200,200italic,300,300italic,regular,italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic"
         rel="stylesheet" />
 
-    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.css'
-        integrity='sha512-x9WwyMYBnlXMNQ6kQ/Lyzu1NqIhLQKL5Oq6xByfXuRj7s9CskyCbLv/1IjqzJmXwFXWr0ov6jBV7Qbc0hh9nHg=='
-        crossorigin='anonymous' />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        crossorigin="anonymous" />
 </head>
 
 <body>
@@ -42,14 +41,12 @@
                     <div class="searchBox">
                         <div class="top">
                             <input type="text" placeholder="What are you looking for today?" id="searchInput">
-
                             <i class="fa-solid fa-magnifying-glass"></i>
                         </div>
-
                         <div class="results" id="searchResultBox"></div>
                     </div>
 
-                    <button class="exploreBtn">
+                    <button class="exploreBtn navhref" data-page="productsPage">
                         Explore
                     </button>
                 </div>
@@ -61,17 +58,15 @@
                 <div class="menuPage" id="menuPage">
                     <div class="searchBox">
                         <div class="top">
-                            <input type="text" placeholder="What are you looking for today?" id="searchInput">
-
+                            <input type="text" placeholder="What are you looking for today?" id="menuSearchInput">
                             <i class="fa-solid fa-magnifying-glass"></i>
                         </div>
-
-                        <div class="results" id="searchResultBox"></div>
+                        <div class="results" id="menuSearchResultBox"></div>
                     </div>
 
                     <ul class="navbar">
                         <li class="navhref" data-page="welcomePage">Home</li>
-                        <li class="navhref" data-page="">About</li>
+                        <li class="navhref" data-page="aboutPage">About</li>
                         <li class="navhref" data-page="productsPage">Products</li>
                         <li class="navhref" data-page="">Contacts</li>
                     </ul>
@@ -89,7 +84,7 @@
 
                     <div class="buttons">
                         <button class="navhref" data-page="productsPage">View Goods</button>
-                        <button class="border-btn">Learn More</button>
+                        <button class="border-btn navhref" data-page="aboutPage">Learn More</button>
                     </div>
                 </div>
             </section>
@@ -105,11 +100,11 @@
 
         <section class="aboutPage">
             <div class="galleryContainer">
-                <div class="galleryCard"><img src="./img//Gallery/Polaroid1.png" alt="Photo"></div>
-                <div class="galleryCard"><img src="./img//Gallery/Polaroid2.png" alt="Photo"></div>
-                <div class="galleryCard"><img src="./img//Gallery/Polaroid3.png" alt="Photo"></div>
-                <div class="galleryCard"><img src="./img//Gallery/Polaroid4.png" alt="Photo"></div>
-                <div class="galleryCard"><img src="./img//Gallery/Poladoid5.png" alt="Photo"></div>
+                <div class="galleryCard"><img src="./img/Gallery/Polaroid1.png" alt="Photo"></div>
+                <div class="galleryCard"><img src="./img/Gallery/Polaroid2.png" alt="Photo"></div>
+                <div class="galleryCard"><img src="./img/Gallery/Polaroid3.png" alt="Photo"></div>
+                <div class="galleryCard"><img src="./img/Gallery/Polaroid4.png" alt="Photo"></div>
+                <div class="galleryCard"><img src="./img/Gallery/Poladoid5.png" alt="Photo"></div>
             </div>
 
             <div class="aboutTitle">
@@ -169,7 +164,6 @@
 
         <section class="blurLayer"></section>
 
-
         <section class="cart">
             <div class="top">
                 <h3>
@@ -182,20 +176,17 @@
                 </button>
             </div>
 
-            <div class="products" id="cartProductsList">
-
-            </div>
+            <div class="products" id="cartProductsList"></div>
 
             <hr>
 
             <div class="footer">
-                <h3 id="cartBillLabel">Bill: 100$</h3>
+                <h3 id="cartBillLabel">Bill: 0₴</h3>
 
                 <button id="checkoutCart"><i class="fa-solid fa-credit-card"></i> Checkout</button>
                 <button id="clearCart" class="clearBtn"><i class="fa-solid fa-trash"></i> Clear All</button>
             </div>
         </section>
-
 
         <section class="orderForm">
             <div class="top">
@@ -207,23 +198,20 @@
             </div>
 
             <div class="container">
-                <form id="orderForm" class="form orderPage">
+                <form id="orderForm" class="form orderPage active">
                     <div class="field">
                         <label for="name">Your name: </label>
-
-                        <input type="text" name="name" required>
+                        <input type="text" id="name" name="name" required>
                     </div>
 
                     <div class="field">
                         <label for="email">Fill out email: </label>
-
-                        <input type="email" name="email" required>
+                        <input type="email" id="email" name="email" required>
                     </div>
 
                     <div class="field">
                         <label for="adress">Adress here: </label>
-
-                        <input type="text" name="adress" required>
+                        <input type="text" id="adress" name="adress" required>
                     </div>
 
                     <button type="submit">
@@ -234,8 +222,6 @@
 
                 <div class="process orderPage" id="processOrderForm">
                     <h3>Order processing!</h3>
-
-
                 </div>
 
                 <div class="complate orderPage" id="complateOrderForm">
@@ -249,8 +235,7 @@
         </section>
 
         <button class="cartBtn" id="cartOpenBtn">
-            <p id="cartQuantityLabel">10</p>
-
+            <p id="cartQuantityLabel">0</p>
             <i class="fa-solid fa-basket-shopping"></i>
         </button>
     </div>
