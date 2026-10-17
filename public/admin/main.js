@@ -1,4 +1,4 @@
-const url = "https://creator-shop.onrender.com";
+const url = "http://localhost:3000"; //"https://creator-shop.onrender.com";
 
 const tabBtns = document.querySelectorAll(".tabBtn");
 const pages = document.querySelectorAll(".page");
@@ -71,6 +71,9 @@ async function reloadOrders() {
         return
     }
 
+    console.log(orders);
+    
+
     ordeersList.innerHTML = "";
 
     for (let order of orders) {
@@ -80,9 +83,11 @@ async function reloadOrders() {
 
         tr.innerHTML = `
             <td>${order.name}</td>
-            <td>nan</td>
-            <td>nana</td>
-            <td></td>
+            <td>${order.email}</td>
+            <td>${order.adress}</td>
+            <td>
+                <button>View</button>
+            </td>
         `
 
         ordeersList.appendChild(tr);

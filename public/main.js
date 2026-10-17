@@ -1,4 +1,4 @@
-const API_URL = "https://creator-shop.onrender.com";
+const API_URL = "http://localhost:3000"; // "https://creator-shop.onrender.com";
 
 class BlurController {
     constructor() {

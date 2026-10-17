@@ -9,8 +9,6 @@ const mongoose = require("mongoose");
 const multer = require("multer");
 const dns = require("dns");
 const { Telegraf } = require("telegraf");
-const { type } = require("os");
-const { timeStamp } = require("console");
 
 const bot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN, {});
 bot.launch();
@@ -103,14 +101,14 @@ const orderSchema = new mongoose.Schema({
 
     status: {
         type: String,
-        enum: ["Pending","Processing","Shipped","Delivered"],
+        enum: ["Pending", "Processing", "Shipped", "Delivered"],
         default: "Pending"
     },
 },
-    {timestamps: true}
+    { timestamps: true }
 );
 
-const Order = mongoose.model("Order",orderSchema);
+const Order = mongoose.model("Order", orderSchema);
 
 const Product = mongoose.model("Product", productSchema);
 
@@ -128,52 +126,71 @@ app.get("/products", async (req, res) => {
     res.status(200).json(products)
 });
 
-app.get("/orders", async(req,res) => {
+app.get("/orders", async (req, res) => {
     const orders = await Order.find(req.query);
 
     res.status(200).json(orders);
 })
 
+
 app.post("/order", async (req, res) => {
-    const data = req.body;
+    try {
+        const data = req.body;
 
-    const products = data.products.map((product, index) => {
-        return `
+        if (!Array.isArray(data.products) || data.products.length === 0) {
+            return res.status(400).json({ message: "Cart is empty or products are invalid" });
+        }
 
-        ${index + 1}. ${product.title}
-        Price: ${product.price}$
-        Quantity: ${product.quantity}`;
-    }).join("\n\n");
+        const products = data.products.map(product => ({
+            id: product._id,
+            title: product.title,
+            price: Number(product.price),
+            quantity: Number(product.quantity)
+        }));
 
-    const total = data.products.reduce((sum, product) => {
-        return sum + product.price * product.quantity;
-    }, 0);
+        const total = products.reduce(
+            (sum, product) => sum + product.price * product.quantity,
+            0
+        );
 
-    const newOrder = await Order.create({
-        name: data.name,
-        email: data.email,
-        adress: data.adress,
-        products,
-        total
-    });
+        const newOrder = await Order.create({
+            name: data.name,
+            email: data.email,
+            adress: data.adress,
+            products,
+            total
+        });
 
-    const message = `New Order: 
+        const productsMessage = products.map((product, index) => `
+${index + 1}. ${product.title}
+Price: ${product.price}$
+Quantity: ${product.quantity}
+`).join("\n");
 
-        Name: ${data.name}
-        Email: ${data.email} 
-        Address: ${data.adress}
+        const message = `New Order:
+Name: ${data.name}
+Email: ${data.email}
+Address: ${data.adress}
 
-        PRODUCTS: ${products} 
+PRODUCTS:
+${productsMessage}
 
-        TOTAL📦: ${total}$`;
+TOTAL: ${total}$`;
 
-    await bot.telegram.sendMessage(
-        process.env.TELEGRAM_CHAT_ID,
-        message
-    );
+        await bot.telegram.sendMessage(process.env.TELEGRAM_CHAT_ID, message);
 
-    res.status(200).json({ message: "Sucsessfull!" })
-})
+        return res.status(201).json({
+            message: "Successful!",
+            order: newOrder
+        });
+    } catch (error) {
+        console.error("ORDER ERROR:", error);
+        return res.status(500).json({
+            message: "Failed to create order"
+        });
+    }
+});
+
 
 const uploadToCloudinary = (fileBuffer) => {
     return new Promise((resolve, reject) => {
@@ -218,7 +235,7 @@ app.post("/product", upload.single("image"), async (req, res) => {
 
         res.status(200).json(savedProducts);
     } catch (error) {
-        res.status(200).json({Message: "Server error with publishing product!"})
+        res.status(200).json({ Message: "Server error with publishing product!" })
     }
 });
 
