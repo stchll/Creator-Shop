@@ -1,141 +1,289 @@
 const tabBtns = document.querySelectorAll(".tabBtn");
 const pages = document.querySelectorAll(".page");
-const productsList = document.getElementById("productsList");
-const ordersList = document.getElementById("ordersList");
-
-const createModalOpen = document.getElementById("createModalOpen");
-const productModal = document.getElementById("productModal");
-const changeProductModalClose = document.getElementById("changeProductModalClose");
 const blurLayer = document.querySelector(".blurLayer");
-const productForm = document.getElementById("productForm");
 
-const deleteProductModal = document.getElementById("deleteProductModal");
-const deleteModalAccept = document.getElementById("deleteModalAccept");
-const deleteModalCancel = document.getElementById("deleteModalCancel");
+function getClassEl(c) {
+    return document.querySelector(`.${c}`);
+}
 
-let productIdToDelete = null;
+function getIdEl(id) {
+    return document.getElementById(id);
+}
 
-tabBtns.forEach(btn => {
+function escapeHtml(value) {
+    return String(value ?? "").replace(/[&<>"']/g, (char) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+    }[char]));
+}
+
+async function getAPI(path) {
+    const response = await fetch(path, { method: "GET" });
+
+    if (!response.ok) {
+        throw new Error(`Request failed: ${response.status}`);
+    }
+
+    return response.json();
+}
+
+const deleteModal = getIdEl("deleteProductModal");
+const deleteTitle = deleteModal.querySelector("h3");
+const deleteAccept = getIdEl("deleteModalAccept");
+const deleteCancel = getIdEl("deleteModalCancel");
+
+let deleteTarget = null;
+
+function openDeleteModal(target) {
+    deleteTarget = target;
+    deleteTitle.textContent = target.type === "order"
+        ? "Do you want to delete this order?"
+        : "Do you want to delete this product?";
+    deleteModal.classList.add("active");
+    blurLayer.classList.add("active");
+}
+
+class Product {
+    constructor() {
+        this.api = "/products";
+        this.list = getIdEl("productsList");
+
+        this.modal = getIdEl("productModal");
+        this.form = getIdEl("productForm");
+        this.openBtn = getIdEl("createModalOpen");
+        this.closeBtn = getIdEl("changeProductModalClose");
+
+        this.openBtn.addEventListener("click", () => {
+            this.modal.classList.add("active");
+            blurLayer.classList.add("active");
+        });
+
+        this.closeBtn.addEventListener("click", closeAll);
+
+        this.form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            try {
+                const response = await fetch("/product", {
+                    method: "POST",
+                    body: new FormData(this.form)
+                });
+
+                if (response.ok) {
+                    closeAll();
+                    this.reload();
+                }
+            } catch (error) {
+                console.error("Failed to create product", error);
+            }
+        });
+
+        this.list.addEventListener("click", (e) => {
+            const btn = e.target.closest(".deleteBtn");
+
+            if (!btn) return;
+
+            openDeleteModal({ type: "product", id: btn.dataset.id });
+        });
+
+        this.reload();
+    }
+
+    async reload() {
+        try {
+            const products = await getAPI(this.api);
+
+            this.list.innerHTML = "";
+
+            products.forEach((product) => {
+                this.list.appendChild(this.createRow(product));
+            });
+        } catch (error) {
+            console.error("Failed to fetch products", error);
+        }
+    }
+
+    createRow(product) {
+        const tr = document.createElement("tr");
+
+        tr.innerHTML = `
+            <td><img src="${escapeHtml(product.image)}" alt=""></td>
+            <td>${escapeHtml(product.title)}</td>
+            <td>${escapeHtml(product.description)}</td>
+            <td>${escapeHtml(product.price)}$</td>
+            <td>
+                <button class="deleteBtn" data-id="${escapeHtml(product._id)}">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+            </td>
+        `;
+
+        return tr;
+    }
+}
+
+class Order {
+    constructor() {
+        this.api = "/orders";
+        this.toUpdateId = null;
+
+        this.ordersList = getIdEl("ordersList");
+        this.modal = getClassEl("orderUpdateModal");
+        this.closeBtn = getIdEl("orderUpdateClose");
+        this.select = getIdEl("orderUpdateSelect");
+        this.updateBtn = getIdEl("orederUpdateBtn");
+
+        this.closeBtn.addEventListener("click", closeAll);
+
+        this.updateBtn.addEventListener("click", async (e) => {
+            e.preventDefault();
+
+            if (!this.toUpdateId) return;
+
+            try {
+                const response = await fetch(`${this.api.slice(0, -1)}/${this.toUpdateId}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ status: this.select.value })
+                });
+
+                if (response.ok) {
+                    closeAll();
+                    this.reload();
+                }
+            } catch (error) {
+                console.error("Failed to update order", error);
+            }
+        });
+
+        this.ordersList.addEventListener("click", (e) => {
+            const deleteBtn = e.target.closest(".deleteBtn");
+            const editBtn = e.target.closest(".editBtn");
+
+            if (deleteBtn) {
+                openDeleteModal({ type: "order", id: deleteBtn.dataset.id });
+            }
+
+            if (editBtn) {
+                this.openUpdateModal(editBtn.dataset.id, editBtn.dataset.status);
+            }
+        });
+
+        this.reload();
+    }
+
+    async openUpdateModal(id, currentStatus) {
+        try {
+            const statuses = await getAPI("/orderStatuses");
+
+            this.select.innerHTML = "";
+
+            statuses.forEach((status) => {
+                const opt = document.createElement("option");
+                opt.textContent = status;
+                opt.value = status;
+                opt.selected = status === currentStatus;
+                this.select.appendChild(opt);
+            });
+
+            this.toUpdateId = id;
+            this.modal.classList.add("active");
+            blurLayer.classList.add("active");
+        } catch (error) {
+            console.error("Failed to load statuses", error);
+        }
+    }
+
+    async reload() {
+        try {
+            const orders = await getAPI(this.api);
+
+            this.ordersList.innerHTML = "";
+
+            orders.forEach((order) => {
+                this.ordersList.appendChild(this.createRow(order));
+            });
+        } catch (error) {
+            console.error("Failed to fetch orders", error);
+        }
+    }
+
+    createRow(order) {
+        const productsHtml = order.products
+            .map((p) => `<div>${escapeHtml(p.title)} (${escapeHtml(p.quantity)}x)</div>`)
+            .join("");
+
+        const tr = document.createElement("tr");
+
+        tr.innerHTML = `
+            <td>${escapeHtml(order.name)}</td>
+            <td>${escapeHtml(order.email)}</td>
+            <td>${escapeHtml(order.adress)}</td>
+            <td>${productsHtml}</td>
+            <td>${escapeHtml(order.total)}$</td>
+            <td><span class="status status-${escapeHtml(order.status).toLowerCase()}">${escapeHtml(order.status)}</span></td>
+            <td>
+                <button class="deleteBtn" data-id="${escapeHtml(order._id)}">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+
+                <button class="editBtn" data-id="${escapeHtml(order._id)}" data-status="${escapeHtml(order.status)}">
+                    <i class="fa-solid fa-pen"></i>
+                </button>
+            </td>
+        `;
+
+        return tr;
+    }
+}
+
+const productManager = new Product();
+const orderManager = new Order();
+
+function closeAll() {
+    getIdEl("productModal").classList.remove("active");
+    deleteModal.classList.remove("active");
+    getClassEl("orderUpdateModal").classList.remove("active");
+    blurLayer.classList.remove("active");
+    getIdEl("productForm").reset();
+    deleteTarget = null;
+    orderManager.toUpdateId = null;
+}
+
+blurLayer.addEventListener("click", closeAll);
+deleteCancel.addEventListener("click", closeAll);
+
+deleteAccept.addEventListener("click", async () => {
+    if (!deleteTarget) return;
+
+    const { type, id } = deleteTarget;
+
+    try {
+        const response = await fetch(`/${type}/${id}`, { method: "DELETE" });
+
+        if (response.ok) {
+            closeAll();
+
+            if (type === "order") {
+                orderManager.reload();
+            } else {
+                productManager.reload();
+            }
+        }
+    } catch (error) {
+        console.error(`Failed to delete ${type}`, error);
+    }
+});
+
+tabBtns.forEach((btn) => {
     btn.addEventListener("click", () => {
-        tabBtns.forEach(b => b.classList.remove("active"));
-        pages.forEach(p => p.classList.remove("active"));
+        tabBtns.forEach((b) => b.classList.remove("active"));
+        pages.forEach((p) => p.classList.remove("active"));
 
         btn.classList.add("active");
-        const pageId = btn.getAttribute("data-page");
-        document.querySelector(`.${pageId}`).classList.add("active");
+        document.querySelector(`.${btn.dataset.page}`).classList.add("active");
     });
 });
-
-createModalOpen.addEventListener("click", () => {
-    productModal.classList.add("active");
-    blurLayer.classList.add("active");
-});
-
-const closeModal = () => {
-    productModal.classList.remove("active");
-    deleteProductModal.classList.remove("active");
-    blurLayer.classList.remove("active");
-    productForm.reset();
-};
-
-changeProductModalClose.addEventListener("click", closeModal);
-blurLayer.addEventListener("click", closeModal);
-
-async function fetchProducts() {
-    try {
-        const response = await fetch("/products");
-        const products = await response.json();
-        productsList.innerHTML = "";
-
-        products.forEach(product => {
-            const tr = document.createElement("tr");
-            tr.innerHTML = `
-                <td><img src="${product.image || ''}" alt=""></td>
-                <td>${product.title}</td>
-                <td>${product.description}</td>
-                <td>${product.price}$</td>
-                <td><button class="deleteBtn" data-id="${product._id}"><i class="fa-solid fa-trash"></i></button></td>
-            `;
-            productsList.appendChild(tr);
-        });
-
-        document.querySelectorAll(".deleteBtn").forEach(btn => {
-            btn.addEventListener("click", (e) => {
-                productIdToDelete = e.currentTarget.getAttribute("data-id");
-                deleteProductModal.classList.add("active");
-                blurLayer.classList.add("active");
-            });
-        });
-    } catch (error) {
-        console.error("Failed to fetch products", error);
-    }
-}
-
-async function fetchOrders() {
-    try {
-        const response = await fetch("/orders");
-        const orders = await response.json();
-        ordersList.innerHTML = "";
-
-        orders.forEach(order => {
-            const productsHtml = order.products.map(p => `<div>${p.title} (${p.quantity}x)</div>`).join("");
-            const tr = document.createElement("tr");
-            tr.innerHTML = `
-                <td>${order.name}</td>
-                <td>${order.email}</td>
-                <td>${order.adress}</td>
-                <td>${productsHtml}</td>
-                <td>${order.total}$</td>
-                <td>${order.status}</td>
-                <td>
-                    <button class="deleteBtn"><i class="fa-solid fa-trash"></i></button>
-                    <button class="editBtn"><i class="fa-solid fa-pen"></i></button>
-                </td>
-            `;
-            ordersList.appendChild(tr);
-        });
-    } catch (error) {
-        console.error("Failed to fetch orders", error);
-    }
-}
-
-productForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const formData = new FormData(productForm);
-
-    try {
-        const response = await fetch("/product", {
-            method: "POST",
-            body: formData
-        });
-
-        if (response.ok) {
-            closeModal();
-            fetchProducts();
-        }
-    } catch (error) {
-        console.error("Failed to create product", error);
-    }
-});
-
-deleteModalAccept.addEventListener("click", async () => {
-    if (!productIdToDelete) return;
-
-    try {
-        const response = await fetch(`/product/${productIdToDelete}`, {
-            method: "DELETE"
-        });
-
-        if (response.ok) {
-            closeModal();
-            fetchProducts();
-        }
-    } catch (error) {
-        console.error("Failed to delete product", error);
-    }
-});
-
-deleteModalCancel.addEventListener("click", closeModal);
-
-fetchProducts();
-fetchOrders();

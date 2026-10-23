@@ -9,10 +9,18 @@ const mongoose = require("mongoose");
 const multer = require("multer");
 const dns = require("dns");
 const { Telegraf } = require("telegraf");
-const { message } = require("telegraf/filters");
 
 const bot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN, {});
-bot.launch();
+bot.launch().catch((error) => {
+    console.error("TELEGRAM LAUNCH ERROR:", error);
+});
+
+const orderStatuses = [
+    "Pending",
+    "Processing",
+    "Shipped",
+    "Delivered"
+];
 
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -56,7 +64,7 @@ const productSchema = new mongoose.Schema({
 const orderSchema = new mongoose.Schema({
     name: {
         type: String,
-        required: true,
+        required: true
     },
     email: {
         type: String,
@@ -70,39 +78,54 @@ const orderSchema = new mongoose.Schema({
         {
             id: {
                 type: mongoose.Schema.Types.ObjectId,
-                required: true,
+                required: true
             },
             title: {
                 type: String,
-                required: true,
+                required: true
             },
             price: {
                 type: Number,
-                required: true,
+                required: true
             },
             quantity: {
                 type: Number,
                 required: true,
-                min: 1,
+                min: 1
             }
         }
     ],
     total: {
         type: Number,
         required: true,
-        min: 0,
+        min: 0
     },
     status: {
         type: String,
-        enum: ["Pending", "Processing", "Shipped", "Delivered"],
+        enum: orderStatuses,
         default: "Pending"
-    },
-},
-    { timestamps: true }
-);
+    }
+}, { timestamps: true });
 
 const Order = mongoose.model("Order", orderSchema);
 const Product = mongoose.model("Product", productSchema);
+
+const uploadToCloudinary = (fileBuffer) => {
+    return new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+            { folder: "creator-shop" },
+            (error, result) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(result);
+                }
+            }
+        );
+
+        stream.end(fileBuffer);
+    });
+};
 
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "index.html"));
@@ -112,19 +135,37 @@ app.get("/admin", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "admin", "index.html"));
 });
 
+app.get("/orderStatuses", (req, res) => {
+    res.status(200).json(orderStatuses);
+});
+
 app.get("/products", async (req, res) => {
-    const products = await Product.find(req.query);
-    res.status(200).json(products);
+    try {
+        const products = await Product.find(req.query);
+        res.status(200).json(products);
+    } catch (error) {
+        console.error("PRODUCTS GET ERROR:", error);
+        res.status(500).json({ message: "Failed to load products" });
+    }
 });
 
 app.get("/orders", async (req, res) => {
-    const orders = await Order.find(req.query).sort({ createdAt: -1 });
-    res.status(200).json(orders);
+    try {
+        const orders = await Order.find(req.query).sort({ createdAt: -1 });
+        res.status(200).json(orders);
+    } catch (error) {
+        console.error("ORDERS GET ERROR:", error);
+        res.status(500).json({ message: "Failed to load orders" });
+    }
 });
 
 app.post("/order", async (req, res) => {
     try {
         const data = req.body;
+
+        if (!data.name || !data.email || !data.adress) {
+            return res.status(400).json({ message: "Name, email and address are required" });
+        }
 
         if (!Array.isArray(data.products) || data.products.length === 0) {
             return res.status(400).json({ message: "Cart is empty or products are invalid" });
@@ -166,7 +207,11 @@ ${productsMessage}
 
 TOTAL: ${total}$`;
 
-        await bot.telegram.sendMessage(process.env.TELEGRAM_CHAT_ID, message);
+        try {
+            await bot.telegram.sendMessage(process.env.TELEGRAM_CHAT_ID, message);
+        } catch (telegramError) {
+            console.error("TELEGRAM SEND ERROR:", telegramError);
+        }
 
         return res.status(201).json({
             message: "Successful!",
@@ -174,30 +219,49 @@ TOTAL: ${total}$`;
         });
     } catch (error) {
         console.error("ORDER ERROR:", error);
-        return res.status(500).json({
-            message: "Failed to create order"
-        });
+        return res.status(500).json({ message: "Failed to create order" });
     }
 });
 
-const uploadToCloudinary = (fileBuffer) => {
-    return new Promise((resolve, reject) => {
-        const stream = cloudinary.uploader.upload_stream(
-            {
-                folder: "creator-shop"
-            },
-            (error, result) => {
-                if (error) {
-                    reject(error);
-                } else {
-                    resolve(result);
-                }
-            }
+app.put("/order/:id", async (req, res) => {
+    try {
+        const { status } = req.body;
+
+        if (!orderStatuses.includes(status)) {
+            return res.status(400).json({ message: "Invalid order status" });
+        }
+
+        const order = await Order.findByIdAndUpdate(
+            req.params.id,
+            { status },
+            { new: true, runValidators: true }
         );
 
-        stream.end(fileBuffer);
-    });
-};
+        if (!order) {
+            return res.status(404).json({ message: "Order not found" });
+        }
+
+        res.status(200).json(order);
+    } catch (error) {
+        console.error("ORDER UPDATE ERROR:", error);
+        res.status(500).json({ message: "Failed to update order" });
+    }
+});
+
+app.delete("/order/:id", async (req, res) => {
+    try {
+        const order = await Order.findByIdAndDelete(req.params.id);
+
+        if (!order) {
+            return res.status(404).json({ message: "Order not found" });
+        }
+
+        res.status(200).json({ message: "Order was deleted!" });
+    } catch (error) {
+        console.error("ORDER DELETE ERROR:", error);
+        res.status(500).json({ message: "Failed to delete order!" });
+    }
+});
 
 app.post("/product", upload.single("image"), async (req, res) => {
     try {
@@ -219,38 +283,36 @@ app.post("/product", upload.single("image"), async (req, res) => {
             imagePublicID: publicID
         });
 
-        const savedProducts = await newProduct.save();
+        const savedProduct = await newProduct.save();
 
-        res.status(200).json(savedProducts);
+        res.status(200).json(savedProduct);
     } catch (error) {
         console.error("PRODUCT CREATE ERROR:", error);
         res.status(500).json({ message: "Server error with publishing product!" });
     }
 });
 
-app.delete("/order/:id", async (req,res) => {
-    try {
-        const order = await Order.findByIdAndDelete(req.params.id);
-
-        res.status(200).json({message: "Order was deleted!"})
-    } catch(error) {
-        res.status(500).json({message: "Failed to delete order!"})
-    }
-})
-
 app.delete("/product/:id", async (req, res) => {
     try {
         const product = await Product.findByIdAndDelete(req.params.id);
 
-        if (product && product.imagePublicID) {
+        if (!product) {
+            return res.status(404).json({ message: "Product not found" });
+        }
+
+        if (product.imagePublicID) {
             await cloudinary.uploader.destroy(product.imagePublicID);
         }
 
         res.status(200).json({ message: "Product deleted!" });
     } catch (error) {
+        console.error("PRODUCT DELETE ERROR:", error);
         res.status(500).json({ message: "Failed to delete product" });
     }
 });
+
+process.once("SIGINT", () => bot.stop("SIGINT"));
+process.once("SIGTERM", () => bot.stop("SIGTERM"));
 
 app.listen(PORT, () => {
     console.log(`Server start on ${PORT}`);
