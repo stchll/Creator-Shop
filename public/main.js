@@ -1,5 +1,3 @@
-const API_URL = "";
-
 class BlurController {
     constructor() {
         this.section = document.querySelector(".blurLayer");

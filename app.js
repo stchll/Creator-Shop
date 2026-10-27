@@ -218,7 +218,7 @@ app.get("/orders", requireAuth, async (req, res) => {
     }
 });
 
-app.post("/order", requireAuth, async (req, res) => {
+app.post("/order", async (req, res) => {
     try {
         const data = req.body;
 
