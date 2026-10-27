@@ -1,4 +1,4 @@
-const API_URL = "https://creator-shop.onrender.com";
+const API_URL = "";
 
 class BlurController {
     constructor() {
@@ -102,13 +102,13 @@ class Cart {
 }
 
 class ProductAPI {
-    constructor(url) {
-        this.url = url;
+    constructor() {
+        console.log("Products inited");
     }
 
     async getProducts() {
         const response = await fetch(
-            `${this.url}/products`
+            '/products'
         );
 
         if (!response.ok) {
@@ -282,12 +282,12 @@ class CartModal {
     }
 
     open() {
-        this.section.style.right = "0";
+        this.section.style.left = "50%";
         Blru.set(true);
     }
 
     close() {
-        this.section.style.right = "-100%";
+        this.section.style.left = "200%";
         Blru.set(false);
     }
 }
@@ -326,7 +326,7 @@ class OrderForm {
         this.processPage.style.display = "flex";
 
         try {
-            const response = await fetch(`${API_URL}/order`, {
+            const response = await fetch('/order', {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -490,7 +490,7 @@ const Nav = new Navigation();
 const header = new Header();
 const cart = new Cart();
 const cartUI = new CartUI(cart);
-const productAPI = new ProductAPI(API_URL);
+const productAPI = new ProductAPI();
 const searchBar = new SearchBar(productAPI, cart, cartUI);
 const productUI = new ProductUI(productAPI, cart, cartUI);
 const orderForm = new OrderForm(cart, cartUI);

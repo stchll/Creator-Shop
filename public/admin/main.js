@@ -2,6 +2,27 @@ const tabBtns = document.querySelectorAll(".tabBtn");
 const pages = document.querySelectorAll(".page");
 const blurLayer = document.querySelector(".blurLayer");
 
+const authView = document.getElementById('auth-view');
+const userView = document.getElementById('user-view');
+const form = document.getElementById('auth-form');
+const message = document.getElementById('message');
+const submitBtn = document.getElementById('submit-btn');
+const logoutBtn = document.getElementById('logout-btn');
+
+const mode = 'login';
+
+async function api(url, method = 'GET', body) {
+    const res = await fetch(url, {
+        method,
+        headers: {"Content-Type": "application/json"},
+        body: body ? JSON.stringify(body) : undefined,
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    return data;
+}
+
 function getClassEl(c) {
     return document.querySelector(`.${c}`);
 }
@@ -287,3 +308,50 @@ tabBtns.forEach((btn) => {
         document.querySelector(`.${btn.dataset.page}`).classList.add("active");
     });
 });
+
+function showAuth() {
+    userView.style.display = "none";
+    authView.style.display = "flex";
+    form.reset();
+}
+
+async function showUser() {
+    const me = await api('/api/me');
+    document.getElementById('username').textContent = me.username;
+    authView.style.display = "none";
+    userView.style.display = "flex";
+}
+
+form.onsubmit = async (e) => {
+    e.preventDefault();
+    const username = form.username.value.trim();
+    const password = form.password.value;
+
+    try {
+        await api('/api/' + mode, 'POST', { username,password });
+        message.textContent = '';
+        await showUser();
+    } catch (err) {
+        message.textContent = err.message;
+    }
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+    try {
+        await showUser();
+    } catch (error) {
+        showAuth();
+    }
+});
+
+logoutBtn.onclick = async (e) => {
+    e.preventDefault();
+
+    try {
+        await api('/api/logout', 'POST');
+
+        showAuth();
+    } catch (error) {
+        message.textContent = error
+    }
+}

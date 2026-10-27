@@ -4,13 +4,19 @@ const express = require("express");
 const cloudinary = require("cloudinary").v2;
 const path = require("path");
 const cors = require("cors");
-const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const multer = require("multer");
-const dns = require("dns");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
+const cookieParser = require('cookie-parser');
+const rateLimit = require("express-rate-limit");
 const { Telegraf } = require("telegraf");
+const { create } = require("domain");
+
+const COOKIE_NAME = "token";
 
 const bot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN, {});
+
 bot.launch().catch((error) => {
     console.error("TELEGRAM LAUNCH ERROR:", error);
 });
@@ -37,13 +43,19 @@ const PORT = process.env.PORT || 3000;
 const app = express();
 
 app.use(cors());
-app.use(bodyParser.json());
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
+app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
-dns.setServers([
-    "1.1.1.1",
-    "8.8.8.8"
-]);
+const ADMIN_USERNAME = process.env.ADMIN_USERNAME;
+const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD_HASH;
+
+const cookieOptions = {
+    httpOnly: true,
+    sameSite: 'strict',
+    maxAge: 10 * 60 * 1000,
+};
 
 mongoose.connect(process.env.DATABASE_URL)
     .then(() => {
@@ -52,6 +64,19 @@ mongoose.connect(process.env.DATABASE_URL)
     .catch((error) => {
         console.error(error);
     });
+
+const adminSchema = new mongoose.Schema({
+    username: {
+        type: String,
+        required: true,
+        unique: true,
+    },
+
+    passwordHash: {
+        type: String,
+        required: true,
+    }
+})
 
 const productSchema = new mongoose.Schema({
     title: String,
@@ -109,6 +134,31 @@ const orderSchema = new mongoose.Schema({
 
 const Order = mongoose.model("Order", orderSchema);
 const Product = mongoose.model("Product", productSchema);
+const Admin = mongoose.model("Admin",adminSchema);
+
+function createToken(user) {
+    return jwt.sign(
+        {id: user.id,username: user.username},
+        process.env.JWT_SECRET,
+        {expiresIn: '5m'},
+    );
+};
+
+function requireAuth(req,res,next) {
+    const token = req.cookies[COOKIE_NAME];
+
+    if (!token) {
+        return res.status(401).json({error: 'Needs auth!'});
+    }
+
+    try {
+        req.user = jwt.verify(token,process.env.JWT_SECRET);
+        next();
+    } catch {
+        res.clearCookie(COOKIE_NAME);
+        res.status(401).json({error: "Session is over!"})
+    };
+};
 
 const uploadToCloudinary = (fileBuffer) => {
     return new Promise((resolve, reject) => {
@@ -131,7 +181,16 @@ app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-app.get("/admin", (req, res) => {
+app.get('/api/me', requireAuth, (req,res) => {
+    res.json({username: req.user.username});
+});
+
+app.post('/api/logout', (req,res) => {
+    res.clearCookie(COOKIE_NAME);
+    res.json({ok : true});
+})
+
+app.get("/admin", requireAuth, (req, res) => {
     res.sendFile(path.join(__dirname, "public", "admin", "index.html"));
 });
 
@@ -141,7 +200,7 @@ app.get("/orderStatuses", (req, res) => {
 
 app.get("/products", async (req, res) => {
     try {
-        const products = await Product.find(req.query);
+        const products = await Product.find();
         res.status(200).json(products);
     } catch (error) {
         console.error("PRODUCTS GET ERROR:", error);
@@ -149,9 +208,9 @@ app.get("/products", async (req, res) => {
     }
 });
 
-app.get("/orders", async (req, res) => {
+app.get("/orders", requireAuth, async (req, res) => {
     try {
-        const orders = await Order.find(req.query).sort({ createdAt: -1 });
+        const orders = await Order.find().sort({ createdAt: -1 });
         res.status(200).json(orders);
     } catch (error) {
         console.error("ORDERS GET ERROR:", error);
@@ -159,7 +218,7 @@ app.get("/orders", async (req, res) => {
     }
 });
 
-app.post("/order", async (req, res) => {
+app.post("/order", requireAuth, async (req, res) => {
     try {
         const data = req.body;
 
@@ -223,7 +282,7 @@ TOTAL: ${total}$`;
     }
 });
 
-app.put("/order/:id", async (req, res) => {
+app.put("/order/:id", requireAuth, async (req, res) => {
     try {
         const { status } = req.body;
 
@@ -248,7 +307,7 @@ app.put("/order/:id", async (req, res) => {
     }
 });
 
-app.delete("/order/:id", async (req, res) => {
+app.delete("/order/:id", requireAuth, async (req, res) => {
     try {
         const order = await Order.findByIdAndDelete(req.params.id);
 
@@ -263,7 +322,7 @@ app.delete("/order/:id", async (req, res) => {
     }
 });
 
-app.post("/product", upload.single("image"), async (req, res) => {
+app.post("/product", requireAuth, upload.single("image"), async (req, res) => {
     try {
         const data = req.body;
         let imagePath = "";
@@ -292,7 +351,7 @@ app.post("/product", upload.single("image"), async (req, res) => {
     }
 });
 
-app.delete("/product/:id", async (req, res) => {
+app.delete("/product/:id", requireAuth, async (req, res) => {
     try {
         const product = await Product.findByIdAndDelete(req.params.id);
 
@@ -311,8 +370,69 @@ app.delete("/product/:id", async (req, res) => {
     }
 });
 
-process.once("SIGINT", () => bot.stop("SIGINT"));
-process.once("SIGTERM", () => bot.stop("SIGTERM"));
+app.post('/api/login', async (req,res) => {
+    try {
+        const { username,password } = req.body;
+
+        const user = await Admin.findOne({ username });
+
+        console.log(password,username);
+        
+
+        if (!user || !await bcrypt.compare(password,user.passwordHash)) {
+            return res.status(401).json({error: "Wrong login or password!"})
+        }
+
+        res.cookie(COOKIE_NAME,createToken({
+            id: user._id.toString(),
+            username: user.username
+        }), cookieOptions);
+
+        res.json({username: user.username});
+    } catch (error) {
+        res.status(500).json({error: "Server error!"});
+    };
+});
+
+app.post('/api/register', async (req,res) => {
+    try {
+        const { username,password } = req.body;
+
+        if (!username || !password || password.length < 6) {
+            return res.status(400).json({
+                error: "Username & password required! Password must be more than 6 chars!"
+            });
+        };
+
+        const existingUser = await Admin.findOne({ username });
+
+        if (existingUser) {
+            return res.status(409).json({
+                error: "Username already taken!"
+            });
+        };
+
+        const passwordHash = await bcrypt.hash(password,10);
+
+        console.log(passwordHash);
+
+
+        const user = await Admin.create({
+            username,
+            passwordHash
+        });
+
+        res.cookie(COOKIE_NAME,createToken({
+            id: user._id.toString(),
+            username: user.username,
+
+        }), cookieOptions);
+
+        res.status(201).json({username: user.username});
+    } catch (error) {
+        res.status(500).json({error: "Server error!"});
+    }
+});
 
 app.listen(PORT, () => {
     console.log(`Server start on ${PORT}`);

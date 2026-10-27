@@ -20,8 +20,35 @@
 </head>
 
 <body>
-    <div class="wrap">
+    <section class="auth" id="auth-view">
+        <div class="container">
+            <h1>Вхід</h1>
+
+            <form id="auth-form">
+                <input name="username" placeholder="Логін" autocomplete="off">
+                <input name="password" type="password" placeholder="Пароль" autocomplete="off">
+
+                <button type="submit" id="submit-btn">Увійти</button>
+            </form>
+
+            <p id="message"></p>
+        </div>
+    </section>
+
+    <div class="wrap" id="user-view" hidden>
         <header>
+            <div class="profile">
+                <div class="user">
+                    <span>/</span>
+                    <h3 id="username">Username</h3>
+                    <i class="fa-regular fa-circle-check"></i>
+                </div>
+
+                <button id="logout-btn">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </button>
+            </div>
+
             <h2><span>/</span>Creator Shop | Admin</h2>
         </header>
 
