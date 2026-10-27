@@ -13,6 +13,7 @@ const mode = 'login';
 
 async function api(url, method = 'GET', body) {
     const res = await fetch(url, {
+        credentials: "same-origin",
         method,
         headers: {"Content-Type": "application/json"},
         body: body ? JSON.stringify(body) : undefined,

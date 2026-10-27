@@ -140,7 +140,7 @@ function createToken(user) {
     return jwt.sign(
         {id: user.id,username: user.username},
         process.env.JWT_SECRET,
-        {expiresIn: '5m'},
+        {expiresIn: '10m'},
     );
 };
 
@@ -375,9 +375,6 @@ app.post('/api/login', async (req,res) => {
         const { username,password } = req.body;
 
         const user = await Admin.findOne({ username });
-
-        console.log(password,username);
-        
 
         if (!user || !await bcrypt.compare(password,user.passwordHash)) {
             return res.status(401).json({error: "Wrong login or password!"})
