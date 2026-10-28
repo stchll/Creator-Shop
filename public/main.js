@@ -1,3 +1,5 @@
+const getId = item => item._id ?? item.id;
+
 class BlurController {
     constructor() {
         this.section = document.querySelector(".blurLayer");
@@ -63,20 +65,17 @@ class Cart {
     }
 
     setQuantity(id, quantity) {
-        const product = this.items.find(
-            item => (item._id || item.id) === id
-        );
-
+        const product = this.items.find(item => getId(item) === id);
         if (!product) return;
 
-        quantity = Number(quantity);
+        const num = Math.floor(Number(quantity));
 
-        if (quantity <= 0 || Number.isNaN(quantity)) {
+        if (!Number.isFinite(num) || num <= 0) {
             this.remove(id);
             return;
         }
 
-        product.quantity = quantity;
+        product.quantity = Math.min(num, 99);
         this.save();
     }
 
@@ -393,18 +392,36 @@ class Header {
 
 class SearchBar {
     constructor(api, cart, cartUI) {
-        this.bar = document.getElementById("searchInput");
-        this.resultBox = document.getElementById("searchResultBox");
         this.api = api;
         this.cart = cart;
         this.cartUI = cartUI;
 
-        if (this.bar) {
-            this.bar.addEventListener("input", (e) => {
-                e.preventDefault();
-                this.reload(this.bar.value);
-            });
-        }
+        this.bar = document.getElementById("searchInput");
+        this.resultBox = document.getElementById("searchResultBox");
+
+        this.timer = null;
+        this.requestId = 0;
+
+        if (!this.bar || !this.resultBox) return
+
+        this.bar.addEventListener("input", (e) => {
+            e.preventDefault();
+            clearTimeout(this.timer);
+            this.timer = setTimeout(() => this.reload(this.bar.value),250)
+        });
+
+        this.bar.addEventListener("keydown",(e) => {
+            if (e.key === "Escape") this.hide();
+        })
+    }
+
+    hide() {
+        this.resultBox.style.display = "none";
+    }
+
+    clear() {
+        this.resultBox.replaceChildren();
+        this.hide();
     }
 
     async reload(query = "") {
