@@ -337,13 +337,13 @@ form.onsubmit = async (e) => {
     }
 }
 
-// document.addEventListener("DOMContentLoaded", async () => {
-//     try {
-//         await showUser();
-//     } catch (error) {
-//         showAuth();
-//     }
-// });
+document.addEventListener("DOMContentLoaded", async () => {
+    try {
+        await showUser();
+    } catch (error) {
+        showAuth();
+    }
+});
 
 logoutBtn.onclick = async (e) => {
     e.preventDefault();
