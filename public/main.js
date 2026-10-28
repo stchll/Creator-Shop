@@ -511,3 +511,31 @@ clearCartBtn.addEventListener("click", (e) => {
     cart.clear();
     cartUI.render();
 });
+
+class Loader {
+    constructor() {
+        this.section = document.getElementById("loadingScreen");
+        this.title = document.getElementById("loadingTitle");
+
+        this.play();
+    }
+
+    play() {
+        this.section.style.top = "0";
+
+        setTimeout(() => {
+            this.title.style.transform = "translateY(0)";
+            this.title.style.opacity = 1;
+
+            this.finish();
+        }, 1000);
+    }
+
+    finish() {
+        setTimeout(() => {
+            this.section.style.top = "-200%";
+        }, 1000);
+    }
+}
+
+const loader = new Loader();

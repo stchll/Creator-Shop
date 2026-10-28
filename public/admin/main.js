@@ -337,13 +337,13 @@ form.onsubmit = async (e) => {
     }
 }
 
-document.addEventListener("DOMContentLoaded", async () => {
-    try {
-        await showUser();
-    } catch (error) {
-        showAuth();
-    }
-});
+// document.addEventListener("DOMContentLoaded", async () => {
+//     try {
+//         await showUser();
+//     } catch (error) {
+//         showAuth();
+//     }
+// });
 
 logoutBtn.onclick = async (e) => {
     e.preventDefault();
@@ -356,3 +356,51 @@ logoutBtn.onclick = async (e) => {
         message.textContent = error
     }
 }
+
+class Loader {
+    constructor() {
+        this.section = document.getElementById("loadingScreen");
+        this.gretting = document.getElementById("gretting");
+        this.title = document.getElementById("loadingTitle");
+
+        this.play();
+        this.setGretting();
+    }
+
+    play() {
+        this.section.style.top = "0";
+
+        setTimeout(() => {
+            this.title.style.transform = "translateY(0)";
+            this.title.style.opacity = 1;
+        }, 1000);
+
+        this.setGretting();
+
+        setTimeout(() => {
+            this.gretting.style.opacity = "1";
+
+            this.finish()
+        }, 2000);
+    }
+
+    setGretting() {
+        const hour = new Date().getHours();
+
+        if (hour >= 5 && hour < 12) {
+            this.gretting.textContent = "Доброго ранку ☀️";
+        } else if (hour >= 12 && hour < 18) {
+            this.gretting.textContent = "Добрий день 🌤️";
+        } else {
+            this.gretting.textContent = "Доброго вечора 🌙";
+        }
+    }
+
+    finish() {
+        setTimeout(() => {
+            this.section.style.top = "-200%";
+        }, 1000);
+}
+}
+
+const loader = new Loader();

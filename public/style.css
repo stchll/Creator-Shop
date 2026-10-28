@@ -16,6 +16,39 @@ input[type="number"] {
     appearance: textfield;
 }
 
+.loading {
+    width: 100%;
+    height: 100vh;
+    background-color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    font-family: "Montserrat";
+    background-color: #252525;
+    color: #fff;
+    position: fixed;
+    transition: 0.5s ease-in-out;
+    top: 0;
+    z-index: 10;
+}
+
+.loading h1 {
+    transform: translateY(-10px);
+    transition: 0.3s ease;
+    opacity: 0;
+}
+
+.loading h1 span {
+    color: #F5A006;
+}
+
+.loading p {
+    font-size: 1.5rem;
+    opacity: 0;
+    transition: 0.5s ease;
+}
+
 .wrap {
     width: 100%;
     min-height: 100vh;
