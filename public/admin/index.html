@@ -17,27 +17,45 @@
     <link
         href="https://fonts.googleapis.com/css?family=Montserrat+Alternates:100,100italic,200,200italic,300,300italic,regular,italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic"
         rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Unbounded:200,300,regular,500,600,700,800,900" rel="stylesheet" />
 </head>
 
 <body>
     <section class="loading" id="loadingScreen">
-        <h1 id="loadingTitle"><span>/</span>Creator Shop | Admin</h1>
+        <h2 id="loadingTitle"><span>/</span>Creator Shop | Admin</h2>
 
         <p id="gretting">Gretting</p>
     </section>
 
     <section class="auth" id="auth-view">
-        <div class="container">
-            <h1>Вхід</h1>
+        <div class="leftPart">
+            <h1><span>/</span>Creator <br> Shop | Admin</h1>
 
-            <form id="auth-form">
-                <input name="username" placeholder="Логін" autocomplete="off">
-                <input name="password" type="password" placeholder="Пароль" autocomplete="off">
+            <p>Control your goods and manage clients in one place!</p>
+        </div>
 
-                <button type="submit" id="submit-btn">Увійти</button>
-            </form>
+        <div class="rightPart">
+            <div class="container">
+                <h1>Вхід</h1>
 
-            <p id="message"></p>
+                <form id="auth-form">
+                    <div class="field">
+                        <label for="username" class="fieldLabel">Логін</label>
+
+                        <input name="username" placeholder="Введіть логін" class="authInputForm">
+                    </div>
+                    
+                    <div class="field">
+                        <label for="password" class="fieldLabel">Пароль</label>
+
+                        <input name="password" type="password" placeholder="Введіть пароль" class="authInputForm">
+                    </div>
+
+                    <button type="submit" id="submit-btn">Увійти</button>
+                </form>
+
+                <p id="message"></p>
+            </div>
         </div>
     </section>
 
